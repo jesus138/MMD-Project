@@ -52,4 +52,55 @@ public class Command
 			'e',
 			'f'
 	};
+	
+	public static Color representColorchar(char c)
+	{
+		Color color = COLORS[0];
+		switch(c)
+		{
+			case '2':
+				color = COLORS[1];
+				break;
+			case '3':
+				color = COLORS[2];
+				break;
+			case '4':
+				color = COLORS[3];
+				break;
+			case '5':
+				color = COLORS[4];
+				break;
+			case '6':
+				color = COLORS[5];
+				break;
+			case '7':
+				color = COLORS[6];
+				break;
+			case '8':
+				color = COLORS[7];
+				break;
+			case '9':
+				color = COLORS[8];
+				break;
+			case 'a':
+				color = COLORS[9];
+				break;
+			case 'b':
+				color = COLORS[10];
+				break;
+			case 'c':
+				color = COLORS[11];
+				break;
+			case 'd':
+				color = COLORS[12];
+				break;
+			case 'e':
+				color = COLORS[13];
+				break;
+			case 'f':
+				color = COLORS[14];
+				break;
+		}
+		return color;
+	}
 }
