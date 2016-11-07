@@ -103,4 +103,17 @@ public class Command
 		}
 		return color;
 	}
+	
+	public static char getCodeChar(Color color)
+	{
+		int i = 0;
+		char c = COLORSET[i++];
+		while(i < COLORSET.length)
+		{
+			if(color.equals(COLORS[i]))
+				c = COLORSET[i];
+			i++;
+		}
+		return c;
+	}
 }

@@ -12,6 +12,7 @@ import java.util.Vector;
 public class Server
 {
 	public static final int SERVERPORT = 50003;
+	private int port = SERVERPORT;
 	
 	private String playername;
 	private boolean automatic;
@@ -55,6 +56,7 @@ public class Server
 				server.startConnection();
 				while(server.running)
 				{
+					server.gui.appendText("Server erwartet Kommando.");
 					server.query(server.readCmd());
 				}
 			}catch(Exception e){
@@ -80,6 +82,7 @@ public class Server
 	
 	public void query(String cmd) throws IOException, InterruptedException
 	{
+		gui.appendText("Client Kommando: " + cmd);
 		StringBuilder builder = new StringBuilder(cmd);
 		int sep = builder.indexOf(" ");
 		String cmdF = builder.substring(0, sep);
@@ -110,7 +113,7 @@ public class Server
 		writer.close();
 		clientSocket.close();
 		running = false;
-		gui.appendText("Connection to client dropped.");
+		gui.appendText("Verbindung zum Client geschlossen.");
 	}
 	
 	public void newGame(String playername)
@@ -124,6 +127,7 @@ public class Server
 	public void checkCode(String colorcode)
 	{
 		gameHistory.add(colorcode);
+		gui.addNewColorCode(colorcode);
 		if(colorcode.equalsIgnoreCase(this.colorcode))
 		{
 			writer.write(String.format("%s %s\n", Command.RESULT, "BBBB"));
@@ -177,13 +181,17 @@ public class Server
 			colorcode = new String(codeSet);
 			writer.write(String.format("%s %d %s\n", Command.SETUP, codelength, new String(availableColors)));
 		}
+		else
+		{
+			writer.write(String.format("%s %d %s\n", Command.SETUP, codelength, new String(availableColors)));
+		}
 		writer.write(String.format("%s\n", Command.GUESS));
 	}
 	
 	public synchronized void quitGame()
 	{
 		running = false;
-		gui.setText("Server is dead.");
+		gui.setText("Server wurde beendet.");
 	}
 	
 	public void serverQuit()
@@ -195,6 +203,7 @@ public class Server
 	public void setColorCode(String code)
 	{
 		this.colorcode = code;
+		codelength = code.length();
 	}
 	
 	public void setMode(boolean automatic)
@@ -206,6 +215,27 @@ public class Server
 	{
 		this.tries = tries;
 		score = this.tries * 10000;
+	}
+	
+	public synchronized void setPort(int port)
+	{
+		if(port != SERVERPORT)
+		{
+			this.port = port;
+			try {
+				serverSocket = new ServerSocket(this.port);
+				endConnection();
+			} catch (IOException e) {
+				gui.showErrorMessage("Netzwerkfehler", "Fehler beim Einstellen des Serverports.");
+			}
+		}
+	}
+	
+	public void setAvailableColors(String colors)
+	{
+		availableColors = new char[colors.length()];
+		for(int i=0; i<availableColors.length; i++)
+			availableColors[i] = colors.charAt(i);
 	}
 	
 	public Vector<String> getHistory()

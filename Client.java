@@ -117,18 +117,18 @@ public class Client
 	
 	public void presentResult(String result)
 	{
-		// show result via gui
+		gui.appendMessage("Ergebnis: " + result);
 	}
 	
 	public void endGame(String result) throws IOException
 	{
 		if(result != null)
 		{
-			// indicate whether player has won or lost via gui
+			gui.setMessage("Glückwunsch! Sie haben gewonnen.");
 		}
 		else
 		{
-			gui.appendMessage("Server has quit.");
+			gui.appendMessage("Verbindung zum Server wurde getrennt.");
 			writer.close();
 			reader.close();
 			connection.close();
