@@ -131,6 +131,8 @@ public class Client
 			gui.setMessage("Glückwunsch! Sie haben gewonnen.");
 		}
 		try{
+			writer.write(String.format("%s\n", Command.QUIT));
+			writer.flush();
 			writer.close();
 			reader.close();
 			connection.close();
@@ -145,13 +147,6 @@ public class Client
 	{
 		writer.write(String.format("%s %s\n", Command.CHECK, colorcode));
 		writer.flush();
-	}
-	
-	public void quitServer()
-	{
-		writer.write(String.format("%s\n", Command.QUIT));
-		writer.flush();
-		endGame(null);
 	}
 	
 	public void autoPlay()

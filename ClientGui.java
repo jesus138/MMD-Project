@@ -245,7 +245,7 @@ public class ClientGui extends JFrame implements ActionListener
 			client.newGame(nameField.getText());
 		}
 		else if(event.getSource() == quitBtn){
-			client.quitServer();
+			client.endGame(null);
 		}
 		else if(event.getSource() == autoBtn){
 			client.autoPlay();

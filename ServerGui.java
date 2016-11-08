@@ -225,7 +225,7 @@ public class ServerGui extends JFrame implements ActionListener
 				tries = Integer.parseInt(guessField.getText());
 				port = Integer.parseInt(portField.getText());
 			}catch(NumberFormatException ex){}
-			server.setConfiguration(automatic, code.length(), code, tries, port);
+			server.setConfiguration(automatic, (Integer)codebox.getSelectedItem(), code, tries, port);
 		}
 	}
 	

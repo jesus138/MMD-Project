@@ -204,8 +204,8 @@ public class Server
 	public void quitGame()
 	{
 		gui.appendText("Spiel wird beendet...");
-		writer.write(String.format("%s\n", Command.QUIT));
-		writer.flush();
+		// writer.write(String.format("%s\n", Command.QUIT));
+		// writer.flush();
 		endConnection();
 	}
 	
