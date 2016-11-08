@@ -11,8 +11,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.net.UnknownHostException;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -140,6 +138,7 @@ public class ClientGui extends JFrame implements ActionListener
 		configPanel.add(quitBtn, c);
 		c.gridy = 7;
 		configPanel.add(autoBtn, c);
+		setToConnectMode();
 	}
 	
 	public void makeInfoPanel()
@@ -193,32 +192,64 @@ public class ClientGui extends JFrame implements ActionListener
 		JOptionPane.showMessageDialog(this, msg, title, JOptionPane.ERROR_MESSAGE);
 	}
 	
+	public void setToConnectMode()
+	{
+		connectBtn.setEnabled(true);
+		newBtn.setEnabled(false);
+		guessBtn.setEnabled(false);
+		quitBtn.setEnabled(false);
+		autoBtn.setEnabled(false);
+	}
+	
+	public void setToSetupMode()
+	{
+		connectBtn.setEnabled(false);
+		newBtn.setEnabled(true);
+		guessBtn.setEnabled(false);
+		quitBtn.setEnabled(true);
+		autoBtn.setEnabled(true);
+	}
+	
+	public void setGuessMode()
+	{
+		connectBtn.setEnabled(false);
+		newBtn.setEnabled(false);
+		guessBtn.setEnabled(true);
+		quitBtn.setEnabled(true);
+		autoBtn.setEnabled(false);
+	}
+	
+	public void setColorPanel(String code)
+	{
+		this.colorcode = code;
+		gameArea.makeSelectionPanel();
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent event)
 	{
 		if(event.getSource() == guessBtn)
 		{
-			
-			try {
-				client.sendCommand(Command.CHECK + " " + gameArea.getStringCode());
-			} catch (IOException e) {
-				showErrorMessage("IOException", e.getMessage());
-			}
+			client.makeGuess(gameArea.getStringCode());
 			gameArea.archiveCode();
 		}
 		else if(event.getSource() == connectBtn)
 		{
-			try {
-				client.connect("localhost", Server.SERVERPORT);
-			} catch (UnknownHostException e) {
-				showErrorMessage("UnknownHostException", e.getMessage());
-			} catch (IOException e) {
-				showErrorMessage("IOException", e.getMessage());
+			try{
+				client.connect(hostField.getText(), Integer.parseInt(portField.getText()));
+			}catch(NumberFormatException ex){
+				showErrorMessage("Falsche Porteingabe", ex.getMessage());
 			}
 		}
-		else if(event.getSource() == newBtn){}
-		else if(event.getSource() == quitBtn){}
-		else if(event.getSource() == autoBtn){}
+		else if(event.getSource() == newBtn){
+			client.newGame(nameField.getText());
+		}
+		else if(event.getSource() == quitBtn){
+			client.quitServer();
+		}
+		else if(event.getSource() == autoBtn){
+			client.autoPlay();
+		}
 	}
 	
 	class GameArea implements ActionListener
@@ -239,20 +270,21 @@ public class ClientGui extends JFrame implements ActionListener
 			gamePanel = new JPanel(new BorderLayout());
 			coursePanel = new CoursePanel(ClientGui.this, COURSEHEIGHT);
 			makeSelectionPanel();
-			gamePanel.add(selectionPanel, BorderLayout.NORTH);
 			gamePanel.add(coursePanel.getPanel(), BorderLayout.CENTER);
 		}
 		
 		public void makeSelectionPanel()
 		{
+			if(selectionPanel != null)
+				gamePanel.remove(selectionPanel);
 			selectionPanel = new JPanel(new BorderLayout());
 			labelPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 20));
 			selectionLabel = new JLabel("Codeauswahl");
 			selectionLabel.setFont(CAPFONT);
 			labelPanel.add(selectionLabel);
 			buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 20));
-			buttonPanel.setPreferredSize(new Dimension(4*50+5*20, 90));
-			buttons = new JButton[4];
+			buttonPanel.setPreferredSize(new Dimension(client.getCodelength()*50+(client.getCodelength()+1)*20, 90));
+			buttons = new JButton[client.getCodelength()];
 			for(int i=0; i<buttons.length; i++)
 			{
 				JButton b = buttons[i] = new JButton();
@@ -263,6 +295,8 @@ public class ClientGui extends JFrame implements ActionListener
 			}
 			selectionPanel.add(labelPanel, BorderLayout.NORTH);
 			selectionPanel.add(buttonPanel, BorderLayout.CENTER);
+			gamePanel.add(selectionPanel, BorderLayout.NORTH);
+			pack();
 		}
 		
 		public void colorDialog(JButton button)
@@ -321,11 +355,5 @@ public class ClientGui extends JFrame implements ActionListener
 		{
 			colorDialog((JButton) e.getSource());
 		}
-	}
-	
-	// Test
-	public static void main(String[] args)
-	{
-		ClientGui gui = new ClientGui(null);
 	}
 }

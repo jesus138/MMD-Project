@@ -6,18 +6,14 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.Vector;
 
 public class Client
 {
 	public static final String CLIENTNAME = "Client03";
 	
 	private String playername;
-	private Vector<String> gameHistory;
-	private boolean automatic;
-	private char[] availableColors;
 	private int codelength;
-	private volatile boolean running;
+	private boolean running;
 	
 	private Socket connection;
 	private ClientGui gui;
@@ -26,38 +22,75 @@ public class Client
 	
 	public Client()
 	{
-		gui = new ClientGui(this);
 		playername = CLIENTNAME;
-		automatic = false;
 		running = false;
+		codelength = 4;
+		gui = new ClientGui(this);
+	}
+	
+	public void connect(String ipaddress, int port)
+	{
+		try{
+			connection = new Socket(ipaddress, port);
+			writer = new PrintWriter(connection.getOutputStream(), true);
+			reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+			gui.setToSetupMode();
+		}catch(UnknownHostException ex){
+			gui.showErrorMessage("UnknownHostException connect()", ex.getMessage());
+		}catch(IOException ex){
+			gui.showErrorMessage("IOException connect()", ex.getMessage());
+		}
+	}
+	
+	public void receiveMessages()
+	{
+		new Thread(new Runnable(){
+			public void run(){
+				while(!connection.isClosed())
+				{
+					try{
+						if(reader.ready())
+							query(reader.readLine());
+						else Thread.sleep(100);
+					}catch(IOException ex){
+						gui.showErrorMessage("Fehler beim Einlesen", ex.getMessage());
+						try { connection.close(); } catch(IOException e){}
+					}catch(InterruptedException e){}
+				}
+				gui.setMessage("Verbindung zum Server verloren.");
+			}
+		}).start();
 	}
 	
 	public void query(String cmd) throws NumberFormatException, IOException
 	{
+		gui.appendMessage("Server sendete: " + cmd);
 		StringBuilder builder = new StringBuilder(cmd);
 		int sep = builder.indexOf(" ");
-		String cmdF = builder.substring(0, sep);
+		String cmdF = builder.toString();
+		if(sep != -1)
+			cmdF = builder.substring(0, sep);
 		if(!running && cmdF.equalsIgnoreCase(Command.SETUP))
 		{
-			String args = builder.substring(sep);
+			String args = builder.substring(sep+1);
 			builder = new StringBuilder(args);
 			sep = builder.indexOf(" ");
 			int codelength = Integer.parseInt(builder.substring(0, sep));
-			String colors = builder.substring(sep);
+			String colors = builder.substring(sep+1);
 			startGame(codelength, colors);
 		}
 		else if(running && cmdF.equalsIgnoreCase(Command.GUESS))
 		{
-			changeToGuessMode();
+			gui.setGuessMode();
 		}
 		else if(running && cmdF.equalsIgnoreCase(Command.RESULT))
 		{
-			String result = builder.substring(sep);
+			String result = builder.substring(sep+1);
 			presentResult(result);
 		}
 		else if(running && cmdF.equalsIgnoreCase(Command.GAMEOVER))
 		{
-			String result = builder.substring(sep);
+			String result = builder.substring(sep+1);
 			endGame(result);
 		}
 		else if(cmdF.equalsIgnoreCase(Command.QUIT))
@@ -66,53 +99,24 @@ public class Client
 		}
 		else
 		{
-			gui.showErrorMessage("Unknown Command", "Command received: " + cmd);
+			gui.showErrorMessage("Unbekanntes Kommando", "Folendes Kommando wurde empfangen: " + cmd);
 		}
-	}
-	
-	public void connect(String ipaddress, int port) throws UnknownHostException, IOException
-	{
-		connection = new Socket(ipaddress, port);
-		writer = new PrintWriter(connection.getOutputStream(), true);
-		reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-	}
-	
-	public void sendCommand(String cmd) throws IOException
-	{
-		writer.println(cmd);
-		String serverCmd = reader.readLine();
-		query(serverCmd);
-		StringBuilder b = new StringBuilder(serverCmd);
-		String code = b.substring(0, b.indexOf(" "));
-		if(code.equalsIgnoreCase(Command.SETUP) || code.equalsIgnoreCase(Command.RESULT))
-			query(reader.readLine());
 	}
 	
 	public void newGame(String playername)
 	{
+		gui.appendMessage("Initialisiere neues Spiel");
 		this.playername = playername;
 		writer.write(String.format("%s %s\n", Command.NEWGAME, this.playername));
+		writer.flush();
+		receiveMessages();
 	}
 	
 	public void startGame(int codelength, String colors)
 	{
 		this.codelength = codelength;
-		gameHistory = new Vector<>();
-		availableColors = new char[colors.length()];
-		for(int i=0; i<availableColors.length; i++) availableColors[i] = colors.charAt(i);
+		gui.setColorPanel(colors);
 		running = true;
-	}
-	
-	public void changeToGuessMode()
-	{
-		if(automatic)
-		{
-			// make calculated routine
-		}
-		else
-		{
-			// toggle gui elements to guess mode
-		}
 	}
 	
 	public void presentResult(String result)
@@ -120,50 +124,48 @@ public class Client
 		gui.appendMessage("Ergebnis: " + result);
 	}
 	
-	public void endGame(String result) throws IOException
+	public void endGame(String result)
 	{
 		if(result != null)
 		{
 			gui.setMessage("Glückwunsch! Sie haben gewonnen.");
 		}
-		else
-		{
-			gui.appendMessage("Verbindung zum Server wurde getrennt.");
+		try{
 			writer.close();
 			reader.close();
 			connection.close();
+			gui.appendMessage("Verbindung zum Server wurde getrennt.");
+		}catch(IOException ex){
+			gui.showErrorMessage("endGame() Fehler", ex.getMessage());
 		}
+		gui.setToConnectMode();
 	}
 	
 	public void makeGuess(String colorcode)
 	{
-		gameHistory.add(colorcode);
 		writer.write(String.format("%s %s\n", Command.CHECK, colorcode));
+		writer.flush();
 	}
 	
-	public void quitServer() throws IOException
+	public void quitServer()
 	{
 		writer.write(String.format("%s\n", Command.QUIT));
+		writer.flush();
 		endGame(null);
 	}
 	
-	public String getName()
+	public void autoPlay()
 	{
-		return playername;
-	}
-	
-	public Vector<String> getHistory()
-	{
-		return gameHistory;
-	}
-	
-	public void setMode(boolean automatic)
-	{
-		this.automatic = automatic;
+		// TODO
 	}
 	
 	public int getCodelength()
 	{
 		return codelength;
+	}
+	
+	public static void main(String[] args)
+	{
+		new Client();
 	}
 }

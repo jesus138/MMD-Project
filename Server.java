@@ -7,25 +7,24 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Random;
-import java.util.Vector;
 
 public class Server
 {
 	public static final int SERVERPORT = 50003;
 	private int port = SERVERPORT;
+	private boolean waiting = false;
 	
 	private String playername;
 	private boolean automatic;
 	private long score;
 	private int availableTries;
-	private Vector<String> gameHistory;
 	
 	private String colorcode;
 	private char[] availableColors;
 	private int codelength;
 	private int tries;
 	
-	private volatile boolean running;
+	private boolean running;
 	private ServerGui gui;
 	private ServerSocket serverSocket;
 	private Socket clientSocket;
@@ -34,9 +33,6 @@ public class Server
 	
 	public Server()
 	{
-		try {
-			serverSocket = new ServerSocket(SERVERPORT);
-		} catch (IOException e) {}
 		codelength = 4;
 		tries = 4;
 		score = 10000 * tries;
@@ -45,56 +41,69 @@ public class Server
 		automatic = true;
 		running = false;
 		gui = new ServerGui(this);
+		gui.setText("Mit aktualisieren starten");
 	}
 	
 	public static void main(String[] args)
 	{
-		Server server = new Server();
-		while(true)
+		new Server();
+	}
+	
+	public void startConnection(int port)
+	{
+		new Thread(new Runnable(){
+			public void run(){
+				try{
+					serverSocket = new ServerSocket(port);
+					gui.appendText("Warten auf Client auf Port " + serverSocket.getLocalPort());
+					waiting = true;
+					clientSocket = serverSocket.accept();
+					waiting = false;
+					gui.setText("Verbindung zum Client aufgebaut: " + clientSocket.getInetAddress().getHostName()
+							+ " auf Port: " + clientSocket.getPort());
+					gui.indicateHostAddress(serverSocket.getInetAddress().getHostAddress() + " auf Port " + serverSocket.getLocalPort());
+					reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+					writer = new PrintWriter(clientSocket.getOutputStream(), true);
+					processCommands();
+				}catch(IOException ex){
+					gui.showErrorMessage("startConnection() fehlgeschlagen", ex.getMessage());
+				}
+			}
+		}).start();
+	}
+	
+	public void processCommands()
+	{
+		while(!clientSocket.isClosed())
 		{
 			try{
-				server.startConnection();
-				while(server.running)
-				{
-					server.gui.appendText("Server erwartet Kommando.");
-					server.query(server.readCmd());
-				}
-			}catch(Exception e){
-				server.gui.showErrorMessage("Exception", e.getMessage());
-			}
+				if(reader.ready())
+					query(reader.readLine());
+				else Thread.sleep(100);
+			}catch(IOException ex){
+				gui.showErrorMessage("processCommands()", ex.getMessage());
+				try { clientSocket.close(); } catch (IOException e) {}
+			}catch(InterruptedException e){}
 		}
+		gui.setText("Serverprozess beendet.\nBitte aktualisieren.");
 	}
 	
-	public synchronized void startConnection() throws IOException
+	public void query(String cmd) throws IOException
 	{
-		clientSocket = serverSocket.accept();
-		gui.setText("Connection to a client established: " + clientSocket.getInetAddress().getHostName());
-		reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-		writer = new PrintWriter(clientSocket.getOutputStream(), true);
-	}
-	
-	public String readCmd() throws IOException
-	{
-		String msg = reader.readLine();
-		gui.appendText("Client sent: " + msg);
-		return msg;
-	}
-	
-	public void query(String cmd) throws IOException, InterruptedException
-	{
-		gui.appendText("Client Kommando: " + cmd);
+		gui.appendText("Kommando empfangen: " + cmd);
 		StringBuilder builder = new StringBuilder(cmd);
+		String cmdF = builder.toString();
 		int sep = builder.indexOf(" ");
-		String cmdF = builder.substring(0, sep);
+		if(sep != -1)
+			cmdF = builder.substring(0, sep);
 		if(!running && cmdF.equalsIgnoreCase(Command.NEWGAME))
 		{
-			String playerarg = builder.substring(sep);
-			newGame(playerarg);
-			setup();
+			String playerarg = builder.substring(sep+1);
+			setup(playerarg);
 		}
 		else if(running && cmdF.equalsIgnoreCase(Command.CHECK))
 		{
-			String code = builder.substring(sep);
+			String code = builder.substring(sep+1);
 			checkCode(code);
 		}
 		else if(cmdF.equalsIgnoreCase(Command.QUIT))
@@ -103,34 +112,35 @@ public class Server
 		}
 		else
 		{
-			gui.showErrorMessage("Unknown Command", "Server received command: " + cmd);
+			gui.showErrorMessage("Unbekanntes Kommando", "Folgendes Kommando wurde erhalten: " + cmd);
 		}
 	}
 	
-	public synchronized void endConnection() throws IOException
+	public void endConnection()
 	{
-		reader.close();
-		writer.close();
-		clientSocket.close();
-		running = false;
-		gui.appendText("Verbindung zum Client geschlossen.");
-	}
-	
-	public void newGame(String playername)
-	{
-		this.playername = playername;
-		availableTries = tries;
-		gameHistory = new Vector<>();
-		running = true;
+		try{
+			if(clientSocket != null)
+			{
+				clientSocket.shutdownInput();
+				clientSocket.shutdownOutput();
+				reader.close();
+				writer.close();
+				clientSocket.close();
+				gui.appendText("Verbindung zum Client geschlossen.");
+			}
+			running = false;
+			startConnection(port);
+		}catch(IOException ex){
+			gui.showErrorMessage("endConnection() fehlgeschlagen", ex.getMessage());
+		}
 	}
 	
 	public void checkCode(String colorcode)
 	{
-		gameHistory.add(colorcode);
 		gui.addNewColorCode(colorcode);
 		if(colorcode.equalsIgnoreCase(this.colorcode))
 		{
-			writer.write(String.format("%s %s\n", Command.RESULT, "BBBB"));
+			writer.write(String.format("%s %s\n", Command.RESULT, "BBBB"));	// muss überarbeitet werden
 			writer.write(String.format("%s %s\n", Command.GAMEOVER, Command.GAMEOVER_WIN));
 		}
 		else
@@ -168,10 +178,15 @@ public class Server
 				writer.write(String.format("%s\n", Command.GUESS));
 			}
 		}
+		writer.flush();
 	}
 	
-	public void setup()
+	public void setup(String playername)
 	{
+		this.playername = playername;
+		availableTries = tries;
+		running = true;
+		
 		if(automatic)
 		{
 			char[] codeSet = new char[codelength];
@@ -179,25 +194,19 @@ public class Server
 			for(int i=0; i<codeSet.length; i++)
 				codeSet[i] = Command.COLORSET[rand.nextInt(availableColors.length)];
 			colorcode = new String(codeSet);
-			writer.write(String.format("%s %d %s\n", Command.SETUP, codelength, new String(availableColors)));
+			gui.appendText("Client muss raten: " + colorcode);
 		}
-		else
-		{
-			writer.write(String.format("%s %d %s\n", Command.SETUP, codelength, new String(availableColors)));
-		}
+		writer.write(String.format("%s %d %s\n", Command.SETUP, codelength, new String(availableColors)));
 		writer.write(String.format("%s\n", Command.GUESS));
+		writer.flush();
 	}
 	
-	public synchronized void quitGame()
+	public void quitGame()
 	{
-		running = false;
-		gui.setText("Server wurde beendet.");
-	}
-	
-	public void serverQuit()
-	{
+		gui.appendText("Spiel wird beendet...");
 		writer.write(String.format("%s\n", Command.QUIT));
-		quitGame();
+		writer.flush();
+		endConnection();
 	}
 	
 	public void setColorCode(String code)
@@ -206,41 +215,30 @@ public class Server
 		codelength = code.length();
 	}
 	
-	public void setMode(boolean automatic)
+	public void changePort(int port)
 	{
-		this.automatic = automatic;
-	}
-	
-	public void setTries(int tries)
-	{
-		this.tries = tries;
-		score = this.tries * 10000;
-	}
-	
-	public synchronized void setPort(int port)
-	{
-		if(port != SERVERPORT)
+		if(port >= 50000 && port <= 50100)
 		{
+			gui.appendText("Port wird geändert auf: " + port);
 			this.port = port;
-			try {
-				serverSocket = new ServerSocket(this.port);
-				endConnection();
-			} catch (IOException e) {
-				gui.showErrorMessage("Netzwerkfehler", "Fehler beim Einstellen des Serverports.");
-			}
 		}
+		endConnection();
 	}
 	
-	public void setAvailableColors(String colors)
+	public void setConfiguration(boolean automatic, int codelength, String colors, int tries, int port)
 	{
-		availableColors = new char[colors.length()];
-		for(int i=0; i<availableColors.length; i++)
-			availableColors[i] = colors.charAt(i);
-	}
-	
-	public Vector<String> getHistory()
-	{
-		return gameHistory;
+		if(!running && !waiting){
+			this.automatic = automatic;
+			this.codelength = codelength;
+			availableColors = new char[colors.length()];
+			for(int i=0; i<availableColors.length; i++)
+				availableColors[i] = colors.charAt(i);
+			this.tries = tries;
+			score = this.tries * 10000;
+			changePort(port);
+		}else
+			gui.showErrorMessage("setConfiguration()", "Konfiguration kann nicht während eines laufenden Spiels geändert werden.\n"
+					+ "Zudem kann es sein, dass der Server bereits wartet.");
 	}
 	
 	public void writeToHighscore()

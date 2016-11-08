@@ -42,7 +42,7 @@ public class ServerGui extends JFrame implements ActionListener
 	private JPanel setupPanel;
 	private JLabel setupLabel;
 	private JComboBox<String> modebox;
-	private final static String[] MODES = {"Manuell", "Automatisch"};
+	private final static String[] MODES = {"Automatisch", "Manuell"};
 	private JLabel codeLabel;
 	private JComboBox<Integer> codebox;
 	private JLabel colorLabel;
@@ -197,6 +197,11 @@ public class ServerGui extends JFrame implements ActionListener
 		textfield.setText(str);
 	}
 	
+	public void indicateHostAddress(String address)
+	{
+		hostLabel.setText("Hostadresse: " + address);
+	}
+	
 	public void showErrorMessage(String title, String content)
 	{
 		JOptionPane.showMessageDialog(this, content, title, JOptionPane.ERROR_MESSAGE);
@@ -207,51 +212,27 @@ public class ServerGui extends JFrame implements ActionListener
 	{
 		if(e.getSource() == setupButton)
 		{
-			int index = modebox.getSelectedIndex();
-			if(index == 0){
-				server.setMode(false);
-				String code = JOptionPane.showInputDialog(this, "Farbcode eingeben:");
-				int codelength = code.length();
-				appendText("Ihr eingegebener Farbcode: " + code);
-				boolean error = false;
-				if(code.length() != codelength)
-					error = true;
-				for(int i=0; i<code.length(); i++)
-				{
-					int j;
-					for(j=0; j<Command.COLORSET.length; j++)
-						if(code.charAt(i) == Command.COLORSET[j])
-							break;
-					if(j == Command.COLORSET.length)
-						error = true;
-				}
-				if(!error)
-					server.setColorCode(code);
-				else
-					showErrorMessage("Farbfehler", "Ihr eingegebener Farbcode ist falsch.");
-			}
-			else
-				server.setMode(true);
-			
-			boolean error = false;
+			boolean automatic = modebox.getSelectedIndex() == 0 ? true : false;
 			String code = colorField.getText();
+			String colorcode;
+			if(!automatic){
+				colorcode = codeChooserDialog(code);
+				server.setColorCode(colorcode);
+			}
 			int tries = 7;
 			int port = 50003;
 			try{
 				tries = Integer.parseInt(guessField.getText());
 				port = Integer.parseInt(portField.getText());
-			}catch(NumberFormatException ex){
-				error = true;
-			}
-			if(tries <= 0)
-				guessField.setText(String.valueOf(0));
-			if(!error)
-			{
-				server.setAvailableColors(code);
-				server.setTries(tries);
-				server.setPort(port);
-			} else JOptionPane.showMessageDialog(this, "Überprüfen Sie Ihre Einstellungen.", "Fehler", JOptionPane.ERROR_MESSAGE);
+			}catch(NumberFormatException ex){}
+			server.setConfiguration(automatic, code.length(), code, tries, port);
 		}
+	}
+	
+	public String codeChooserDialog(String code)
+	{
+		// TODO
+		return JOptionPane.showInputDialog(this, "Farbcode eingeben:");
 	}
 	
 	// Test
