@@ -178,12 +178,12 @@ public class ServerGui extends JFrame implements ActionListener
 		setJMenuBar(menubar);
 	}
 	
-	public void addNewColorCode(String code)
+	public void addNewColorCode(String code, String rescode)
 	{
 		Color[] colors = new Color[code.length()];
 		for(int i=0; i<colors.length; i++)
 			colors[i] = Command.representColorchar(code.charAt(i));
-		gamearea.addButtons(colors);
+		gamearea.addButtons(colors, rescode);
 	}
 	
 	public void appendText(String addition)
@@ -233,27 +233,5 @@ public class ServerGui extends JFrame implements ActionListener
 	{
 		// TODO
 		return JOptionPane.showInputDialog(this, "Farbcode eingeben:");
-	}
-	
-	// Test
-	public static void main(String[] args)
-	{
-		ServerGui gui = new ServerGui(null);
-		gui.addNewColorCode("1234");
-		gui.addNewColorCode("a82f");
-		gui.addNewColorCode("95b3");
-		gui.addNewColorCode("12345678");
-		gui.addNewColorCode("123");
-		gui.addNewColorCode("12");
-		gui.addNewColorCode("12345");
-		gui.addNewColorCode("12345");
-		gui.addNewColorCode("12345");
-		gui.addNewColorCode("12345");
-		gui.addNewColorCode("12345");
-		gui.addNewColorCode("12345");
-		gui.addNewColorCode("12345");
-		gui.addNewColorCode("12345");
-		gui.addNewColorCode("12345");
-		gui.addNewColorCode("12345");
 	}
 }

@@ -135,50 +135,49 @@ public class Server
 		}
 	}
 	
-	public void checkCode(String colorcode)
+	public void checkCode(String codeguess)
 	{
-		gui.addNewColorCode(colorcode);
-		if(colorcode.equalsIgnoreCase(this.colorcode))
-		{
-			writer.write(String.format("%s %s\n", Command.RESULT, "BBBB"));	// muss überarbeitet werden
-			writer.write(String.format("%s %s\n", Command.GAMEOVER, Command.GAMEOVER_WIN));
+		String feedback = "0";
+		availableTries--;
+		score -= 1000;
+		
+		StringBuilder sb = new StringBuilder();
+		int right = 0, completelyRight = 0;
+		boolean[] alreadyChecked = new boolean[colorcode.length()];
+		for(int i=0; i<codeguess.length() && i<colorcode.length(); i++){
+			if(codeguess.charAt(i) == colorcode.charAt(i)){
+				right++;
+				completelyRight++;
+				alreadyChecked[i] = true;
+				sb.append(Command.RESULT_RIGHT_PLACE);
+			}
 		}
-		else
-		{
-			StringBuilder builder = new StringBuilder();
-			char[] realCode = this.colorcode.toCharArray();
-			char[] givenCode = colorcode.toCharArray();
-			boolean zeroFits = true;
-			for(int i=0; i<givenCode.length; i++)
-			{
-				for(int j=0; j<realCode.length; j++)
-				{
-					if(givenCode[i] == realCode[i])
-					{
-						zeroFits = false;
-						if(i == j) builder.append(Command.RESULT_RIGHT_PLACE);
-						else builder.append(Command.RESULT_WRONG_PLACE);
+		for(int i=0; i<codeguess.length(); i++){
+			for(int j=0; j<colorcode.length(); j++){
+				if(!alreadyChecked[j])
+					if(codeguess.charAt(i) == colorcode.charAt(j)){
+						right++;
+						alreadyChecked[j] = true;
+						sb.append(Command.RESULT_WRONG_PLACE);
 						break;
 					}
-				}
-			}
-			if(zeroFits) builder.append(Command.RESULT_ALL_WRONG);
-			String feedback = builder.toString();
-			writer.write(String.format("%s %s\n", Command.RESULT, feedback));
-			
-			availableTries--;
-			score -= 1000;
-			if(availableTries <= 0)
-			{
-				writer.write(String.format("%s %s\n", Command.GAMEOVER, Command.GAMEOVER_LOSE));
-				running = false;
-			}
-			else
-			{
-				writer.write(String.format("%s\n", Command.GUESS));
 			}
 		}
+		if(right == 0) sb.append(Command.RESULT_ALL_WRONG);
+		boolean won = completelyRight == colorcode.length();
+		boolean lost = availableTries <= 0 && !won;
+		feedback = sb.toString();
+		
+		writer.write(String.format("%s %s\n", Command.RESULT, feedback));
+		if(won)
+			writer.write(String.format("%s %s\n", Command.GAMEOVER, Command.GAMEOVER_WIN));
+		else if(lost)
+			writer.write(String.format("%s %s\n", Command.GAMEOVER, Command.GAMEOVER_LOSE));
+		else
+			writer.write(String.format("%s\n", Command.GUESS));
+		
 		writer.flush();
+		gui.addNewColorCode(codeguess, feedback);
 	}
 	
 	public void setup(String playername)

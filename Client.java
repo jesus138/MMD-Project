@@ -86,6 +86,7 @@ public class Client
 		else if(running && cmdF.equalsIgnoreCase(Command.RESULT))
 		{
 			String result = builder.substring(sep+1);
+			gui.addColorLine(result);
 			presentResult(result);
 		}
 		else if(running && cmdF.equalsIgnoreCase(Command.GAMEOVER))

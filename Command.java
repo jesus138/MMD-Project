@@ -116,4 +116,12 @@ public class Command
 		}
 		return c;
 	}
+	
+	public static Color getResColor(char c)
+	{
+		Color color = new Color(100, 255, 220);
+		if(c == RESULT_WRONG_PLACE) color = new Color(255,255,255);
+		else if(c == RESULT_RIGHT_PLACE) color = new Color(0,0,0);
+		return color;
+	}
 }

@@ -187,6 +187,11 @@ public class ClientGui extends JFrame implements ActionListener
 		textfield.setText(msg + "\n" + text);
 	}
 	
+	public void addColorLine(String result)
+	{
+		gameArea.archiveCode(result);
+	}
+	
 	public void showErrorMessage(String title, String msg)
 	{
 		JOptionPane.showMessageDialog(this, msg, title, JOptionPane.ERROR_MESSAGE);
@@ -231,7 +236,6 @@ public class ClientGui extends JFrame implements ActionListener
 		if(event.getSource() == guessBtn)
 		{
 			client.makeGuess(gameArea.getStringCode());
-			gameArea.archiveCode();
 		}
 		else if(event.getSource() == connectBtn)
 		{
@@ -325,12 +329,12 @@ public class ClientGui extends JFrame implements ActionListener
 			dialog.setVisible(true);
 		}
 		
-		public void archiveCode()
+		public void archiveCode(String result)
 		{
 			Color[] colors = new Color[buttons.length];
 			for(int i=0; i<colors.length; i++)
 				colors[i] = buttons[i].getBackground();
-			coursePanel.addButtons(colors);
+			coursePanel.addButtons(colors, result);
 		}
 		
 		public String getStringCode()
