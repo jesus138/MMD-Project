@@ -34,6 +34,7 @@ public class Client
 			writer = new PrintWriter(connection.getOutputStream(), true);
 			reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 			gui.setToSetupMode();
+			receive();
 		}catch(Exception e){
 			gui.showMessage("Fehler", "Verbindungsaufbau gescheitert");
 		}
@@ -43,6 +44,8 @@ public class Client
 	{
 		if(connection != null && !connection.isClosed()){
 			try{
+				writer.write(String.format("%s\n", Command.QUIT));
+				writer.flush();
 				writer.close();
 				reader.close();
 				connection.close();
@@ -108,7 +111,6 @@ public class Client
 		this.playername = playername;
 		writer.write(String.format("%s %s\n", Command.NEWGAME, this.playername));
 		writer.flush();
-		receive();
 	}
 	
 	public void startGame(int codelength, String colors)
@@ -125,13 +127,7 @@ public class Client
 			gui.showMessage("Spiel zu Ende", (result.equals(Command.GAMEOVER_WIN) ?
 					"Glückwunsch! Sie haben gewonnen." : "Schade, leider verloren."));
 			gui.again();
-		}else{
-			if(connection != null && !connection.isClosed()){
-				writer.write(String.format("%s\n", Command.QUIT));
-				writer.flush();
-			}
-			disconnect();
-		}
+		}else disconnect();
 	}
 	
 	public void makeGuess(String colorcode)

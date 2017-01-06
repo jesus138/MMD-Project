@@ -46,7 +46,7 @@ public class Highscore
 	private static Connection createConnection() throws ClassNotFoundException, SQLException
 	{
 		Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
-		Connection connection = DriverManager.getConnection("jdbc:derby:../highscore; create=true");
+		Connection connection = DriverManager.getConnection("jdbc:derby:./highscore; create=true");
 		return connection;
 	}
 	
