@@ -54,7 +54,7 @@ public class Mastermind extends JFrame implements ActionListener
 		serverBtn.setSize(200, 200);
 		serverBtn.setPreferredSize(new Dimension(200, 200));
 		serverBtn.setFont(Command.CAPTION_FONT);
-		serverBtn.setBackground(Color.gray);
+		serverBtn.setBackground(Color.red);
 		clientBtn = new JButton("Client");
 		clientBtn.addActionListener(this);
 		clientBtn.setSize(200, 200);

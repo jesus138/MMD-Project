@@ -15,8 +15,8 @@ public class Server
 	private int port;
 	
 	private String playername;
-	private int score;
-	private boolean automatic;
+	private int score, halfright, fullright;
+	private boolean automatic, unlimited;
 	private int availableTries;
 	private ServerGui gui;
 	
@@ -27,6 +27,7 @@ public class Server
 	
 	private volatile boolean running;
 	private volatile boolean connected;
+	private boolean clientKnown;
 	private ServerSocket serverSocket;
 	private Socket clientSocket;
 	private PrintWriter writer;
@@ -112,6 +113,7 @@ public class Server
 		}catch(IOException ex){}
 		running = false;
 		connected = false;
+		clientKnown = false;
 		gui.setToSetupMode();
 		connect();
 	}
@@ -119,7 +121,8 @@ public class Server
 	public void checkCode(String codeguess)
 	{
 		String feedback = "0";
-		availableTries--;
+		if(!unlimited)
+			availableTries--;
 		
 		StringBuilder sb = new StringBuilder();
 		int right = 0, completelyRight = 0;
@@ -127,6 +130,7 @@ public class Server
 		boolean[] guessChecked = new boolean[codeguess.length()];
 		for(int i=0; i<codeguess.length() && i<colorcode.length(); i++){
 			if(codeguess.charAt(i) == colorcode.charAt(i)){
+				fullright++;
 				right++;
 				completelyRight++;
 				guessChecked[i] = true;
@@ -138,6 +142,7 @@ public class Server
 			if(!guessChecked[i])
 				for(int j=0; j<colorcode.length(); j++){
 					if(!codeChecked[j] && codeguess.charAt(i) == colorcode.charAt(j)){
+						halfright++;
 						right++;
 						codeChecked[j] = true;
 						sb.append(Command.RESULT_WRONG_PLACE);
@@ -147,16 +152,20 @@ public class Server
 		}
 		if(right == 0) sb.append(Command.RESULT_ALL_WRONG);
 		boolean won = completelyRight == colorcode.length();
-		boolean lost = availableTries <= 0 && !won;
+		boolean lost = !unlimited && availableTries == 0 && !won;
 		feedback = sb.toString();
 		
 		gui.addGuess(Command.getColors(codeguess), feedback);
 		writer.write(String.format("%s %s\n", Command.RESULT, feedback));
-		if(won)
+		if(won){
 			writer.write(String.format("%s %s\n", Command.GAMEOVER, Command.GAMEOVER_WIN));
-		else if(lost)
+			running = false;
+			writeToHighscore(true);
+		} else if(lost){
 			writer.write(String.format("%s %s\n", Command.GAMEOVER, Command.GAMEOVER_LOSE));
-		else
+			running = false;
+			writeToHighscore(false);
+		} else
 			writer.write(String.format("%s\n", Command.GUESS));
 		
 		writer.flush();
@@ -166,9 +175,12 @@ public class Server
 	{
 		this.playername = playername;
 		availableTries = tries;
+		halfright = 0;
+		fullright = 0;
+		score = 0;
 		running = true;
 		
-		if(automatic){
+		if(automatic || clientKnown){
 			char[] codeSet = new char[codelength];
 			char[] pool = new char[availableColors.length];
 			System.arraycopy(availableColors, 0, pool, 0, availableColors.length);
@@ -178,7 +190,9 @@ public class Server
 			colorcode = new String(codeSet);
 			gui.setCode(colorcode);
 		}else colorcode = gui.getChosenCode();
+		gui.clearHistory();
 		
+		clientKnown = true;
 		writer.write(String.format("%s %d %s\n", Command.SETUP, codelength, new String(availableColors)));
 		writer.write(String.format("%s\n", Command.GUESS));
 		writer.flush();
@@ -191,6 +205,7 @@ public class Server
 		availableColors = new char[colors.length()];
 		for(int i=0; i<availableColors.length; i++)
 			availableColors[i] = colors.charAt(i);
+		unlimited = tries == 0;
 		this.tries = tries;
 		if(port >= 50000 && port <= 50100)
 			this.port = port;
@@ -198,7 +213,10 @@ public class Server
 			disconnect();
 	}
 	
-	public void writeToHighscore(){
-		Highscore.insertIntoHighscore(playername, score);
+	public void writeToHighscore(boolean won){
+		int bonus = won ? 10000 : 100;
+		score = (50*halfright + 200*fullright + availableTries*300)/(tries+1) + bonus;
+		gui.appendMessage(playername + " scored " + score);
+		//Highscore.insertIntoHighscore(playername, score);
 	}
 }

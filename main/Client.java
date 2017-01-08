@@ -109,6 +109,7 @@ public class Client
 	public void newGame(String playername)
 	{
 		this.playername = playername;
+		gui.clearHistory();
 		writer.write(String.format("%s %s\n", Command.NEWGAME, this.playername));
 		writer.flush();
 	}

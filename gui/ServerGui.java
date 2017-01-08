@@ -30,8 +30,11 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SpinnerModel;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 
 import main.Command;
@@ -61,7 +64,7 @@ public class ServerGui extends JFrame implements ActionListener, ItemListener
 	private JComboBox<Integer> lengthbox;
 	private JButton chooseBtn;
 	private JLabel guessLabel;
-	private JTextField guessField;
+	private JSpinner guessField;
 	private JLabel portLabel;
 	private JTextField portField;
 	private JButton setupBtn;
@@ -137,7 +140,8 @@ public class ServerGui extends JFrame implements ActionListener, ItemListener
 		chooseBtn.setBackground(Color.white);
 		chooseBtn.setPreferredSize(new Dimension(150, 40));
 		guessLabel = new JLabel("Rateversuche");
-		guessField = new JTextField(String.valueOf(Command.DEFAULT_TRIES), 10);
+		SpinnerModel model = new SpinnerNumberModel(Command.DEFAULT_TRIES, 0, Integer.MAX_VALUE, 1);
+		guessField = new JSpinner(model);
 		portLabel = new JLabel("Netzwerkport");
 		portField = new JTextField(String.valueOf(Command.DEFAULT_PORT), 10);
 		setupBtn = new JButton("Aktualisieren");
@@ -301,9 +305,11 @@ public class ServerGui extends JFrame implements ActionListener, ItemListener
 			boolean automatic = modebox.getSelectedIndex() == 0;
 			int codelength = (Integer)lengthbox.getSelectedItem();
 			String colors = Command.getStringCode(palette);
-			int tries = Integer.parseInt(guessField.getText());
+			int tries = (Integer) guessField.getValue();
 			int port = Integer.parseInt(portField.getText());
 			server.configure(automatic, codelength, colors, tries, port);
+			codePanel.changePanel(palette, codelength);
+			historyPanel.clearHistory(codelength);
 		}
 		else if(e.getSource() == exitItem){
 			server.disconnect();
@@ -334,10 +340,6 @@ public class ServerGui extends JFrame implements ActionListener, ItemListener
 				codePanel.setDisabled(true);
 			else
 				codePanel.setDisabled(false);
-		}
-		else if(e.getSource() == lengthbox){
-			codePanel.changePanel(palette, (Integer)lengthbox.getSelectedItem());
-			historyPanel.clearHistory((Integer)lengthbox.getSelectedItem());
 		}
 	}
 	
@@ -417,7 +419,6 @@ public class ServerGui extends JFrame implements ActionListener, ItemListener
 				palette = new Color[colors.size()];
 				for(int i=0; i<palette.length; i++)
 					palette[i] = colors.get(i);
-				codePanel.changePanel(palette, (Integer)lengthbox.getSelectedItem());
 				dispose();
 			}
 			else if(e.getSource() == caBtn)
