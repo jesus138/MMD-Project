@@ -102,6 +102,8 @@ public class Client
 			String result = builder.substring(sep+1);
 			gui.appendMessage("Resultat: " + result);
 			gui.addGuess(Command.getColors(guessCode), result);
+			if(automatic)
+				ki.nextRes(result);
 		}
 		else if(running && cmdF.equalsIgnoreCase(Command.GAMEOVER)){
 			if(automatic) autorounds--;
