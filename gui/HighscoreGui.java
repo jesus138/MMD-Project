@@ -1,9 +1,8 @@
 package gui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
+import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -13,12 +12,19 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 
 import main.Highscore;
 
+/**
+ * Dient dem anzeigen der Highscore ausgehend vom Server-Programm.
+ * Dieses Fenster gliedert sich in den UI-Thread der ServerGui ein und
+ * lässt diesen bei Beendigung unverändert. Die Highscore wird als HTML-Tabelle
+ * dargestellt und lässt sich nach Wunsch sortieren.
+ * @author Chris
+ * @category Grafikkomponente
+ */
 @SuppressWarnings("serial")
 public class HighscoreGui extends JFrame implements ActionListener
 {
@@ -44,7 +50,7 @@ public class HighscoreGui extends JFrame implements ActionListener
 	private static final String CELL_BEGIN_MAIN_SCORE = "<td align=\"center\">";
 	private static final String CELL_END_MAIN = "</td>";
 	
-	private HighContainer area;
+	private Container area;
 	private JLabel content;
 	private JScrollPane scroller;
 	private JMenuBar menubar;
@@ -55,13 +61,17 @@ public class HighscoreGui extends JFrame implements ActionListener
 	private JMenuItem sortDes;
 	private JMenuItem deleteItem;
 	
+	/**
+	 * Konstruktor übernimmt das erzeugen der Oberfläche, indem er vor allem
+	 * die Funktionen makeMenu() und showRows() aufruft. Außerdem wird eine
+	 * feste Größe festgelegt sowie ein entsprechender Listener registriert,
+	 * um über das Menü die Highscoretabelle sortieren zu können.
+	 */
 	public HighscoreGui()
 	{
 		super("Highscore");
-		area = new HighContainer();
+		area = getContentPane();
 		area.setLayout(new BorderLayout());	
-		area.setOpaque(true);
-		setContentPane(area);
 		content = new JLabel();
 		content.setHorizontalAlignment(SwingConstants.CENTER);
 		content.setVerticalAlignment(SwingConstants.CENTER);
@@ -76,7 +86,7 @@ public class HighscoreGui extends JFrame implements ActionListener
 		setLocationRelativeTo(null);
 	}
 	
-	public void makeMenu()
+	private void makeMenu()
 	{
 		menubar = new JMenuBar();
 		menu = new JMenu("Aktionen");
@@ -99,6 +109,13 @@ public class HighscoreGui extends JFrame implements ActionListener
 		setJMenuBar(menubar);
 	}
 	
+	/**
+	 * Erneuert das Layout nach einem festgelegten Algorithmus. Die zu
+	 * verwendenden Sortieralgorithmen sind in der Highscore Klasse definiert.<br/>
+	 * Prinzipiell interagiert diese Funktion mit der Apache Derby Datenbank und schreibt
+	 * die Abfragenergebnisse in die HTML-Tabelle.
+	 * @param order Sortieralgorithmus
+	 */
 	public void showRows(int order)
 	{
 		StringBuffer buffer = new StringBuffer(HTML_BEGIN + BODY_BEGIN + TABLE_BEGIN);
@@ -142,21 +159,6 @@ public class HighscoreGui extends JFrame implements ActionListener
 					"Sind Sie sicher?", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 			if(option == JOptionPane.YES_OPTION)
 				Highscore.deleteEverything();
-		}
-	}
-	
-	private static class HighContainer extends JPanel
-	{
-		@Override
-		protected void paintComponent(Graphics gr) {
-			super.paintComponent(gr);
-			double g = 210D;
-			double gx = (g-45.0)/(double)getHeight();
-			for(int y=getHeight()-1; y>=0; y--){
-				gr.setColor(new Color(255, (int)g, 30));
-				gr.fillRect(0, y, getWidth(), 1);
-				g-=gx;
-			}
 		}
 	}
 }

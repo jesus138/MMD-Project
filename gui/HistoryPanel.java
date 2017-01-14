@@ -17,6 +17,15 @@ import javax.swing.SwingConstants;
 
 import main.Command;
 
+/**
+ * Die Klasse HistoryPanel stellt den scrollbaren Verlaufsbereich der ClientGui
+ * und ServerGui dar. Sie enthält eine Liste von JPanels für die einzelnen
+ * Rateversuche mit Ergebniscode. Weiterhin besitzt die Klasse eine feste Höhe, aber
+ * eine dynamische Breite in Abhängigkeit von der Codelänge. Oberhalb des eigentlichen
+ * Verlaufsbereichs befindet sich noch ein JLabel welches die Überschrift darstellt.
+ * @author Chris
+ * @category Grafikkomponente
+ */
 @SuppressWarnings("serial")
 public class HistoryPanel extends JPanel implements AdjustmentListener
 {
@@ -28,6 +37,13 @@ public class HistoryPanel extends JPanel implements AdjustmentListener
 	private int maxheight, maxwidth;
 	private Window window;
 	
+	/**
+	 * Konstruktor zur Initialiserung der einzelnen Teilkomponenten und
+	 * definitives Festlegen der Höhe des Verlaufsbereichs.
+	 * @param maxheight feste Maximalhoehe
+	 * @param window übergeordnetes Window bzw. JFrame
+	 * @param length anfänglich Codelänge
+	 */
 	public HistoryPanel(int maxheight, Window window, int length){
 		this.maxheight = maxheight;
 		setMaxWidth(length);
@@ -66,6 +82,12 @@ public class HistoryPanel extends JPanel implements AdjustmentListener
 		return size;
 	}
 
+	/**
+	 * Implementierung des AdjustmentListeners zum anpassen der JPanel Positionen in
+	 * Abhängigkeit von der Scrollposition der Scrollbar.
+	 * @param e Ereignisobjekt
+	 * @see java.awt.event.AdjustmentListener#adjustmentValueChanged(java.awt.event.AdjustmentEvent)
+	 */
 	@Override
 	public void adjustmentValueChanged(AdjustmentEvent e){
 		for(int i=panels.size()-1, y=0; i>=0; i--, y++){
@@ -74,6 +96,17 @@ public class HistoryPanel extends JPanel implements AdjustmentListener
 		}
 	}
 	
+	/**
+	 * Fügt dem Verlaufsbereich ein weiteres JPanel mit den spezifierten Werten visuell ganz oben ein.
+	 * Dabei werden alle Dimensionen neu berechnet und die eventuell neue maximale Breite des Verlaufsbereichs
+	 * bestimmt. Auch die Positionen der einzelnen JPanels sowie deren RoundButtons und der Scrollbar müssen
+	 * neu berechnet werden. Dazu müssen viele Layoutberechnungen auf dem UI-Thread vorgenommen werden. Deshalb
+	 * wird das entfernen aller Komponenten und das darauffolgende Neueinfügen in die EventQueue des UI-Threads
+	 * eingereiht. Dies vermeidet ansonsten anzutreffende RuntimeExceptions, die durch gleichzeitiges Zugreifen
+	 * auf GUI-Elemente zurückzuführen sind.
+	 * @param colors der geratene Farbcode
+	 * @param rescode Resultat des Servers
+	 */
 	public void addButtons(Color[] colors, String rescode){
 		int resnum = colors.length/2;
 		if(colors.length%2==1) resnum++;
@@ -139,6 +172,14 @@ public class HistoryPanel extends JPanel implements AdjustmentListener
 		maxwidth = 4*GAP+resnum*Command.RES_BUTTON_SIZE+length*Command.BUTTON_SIZE+(length-1)*GAP+BARWIDTH;
 	}
 	
+	/**
+	 * Entfernt und löscht alle JPanels welche Rateversuche darstellen.
+	 * Die neue Breite des Verlaufsbereichs sollte hierbei vorerst festgelegt werden.
+	 * Die Länge bezieht sich auf die Länge des Farbcodes und nicht auf die Länge in Pixel,
+	 * welche nämlich durch die private Funktion setMaxWidth() erst berechnet wird.
+	 * Grundsätzlich sollte die aktuell eingestellte Farbcodelänge übergeben werden.
+	 * @param length Breite des Verlaufsbereichs nach dem Leeren - Angabe in Anzahl RoundButtons
+	 */
 	public void clearHistory(int length){
 		setMaxWidth(length);
 		EventQueue.invokeLater(new Runnable() {

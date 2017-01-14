@@ -18,6 +18,21 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+/**
+ * Implementiert das Einstiegsfenster und den zentralen Einstiegspunkt
+ * in das Programm. Lässt dem Anwender die Möglichkeit den Client
+ * oder den Server zu starten. In jedem Fall schließt sich das
+ * Einstiegsfenster und der main-Thread wird der UI-Thread des Clients
+ * oder des Servers. Da das Programm als Client-Server Anwendung gedacht ist
+ * und mit Programmen interagieren soll, die dem selben Netzwerkprotokoll folgen,
+ * sollten Client und Server separat gestartet werden. Es besteht jedoch über
+ * das Menü auch die Möglichkeit Client und Server zugleich im selben Thread zu
+ * starten. Dies ist komfortabel, wenn sich Client und Server auf dem selben Rechner
+ * befinden und nur untereinander kommunizieren sollen. Sollte in diesem Falle jedoch
+ * einer der beiden beendet werden, beendet sich das gesamte Programm.
+ * @author Chris
+ * @category Grafikkomponente
+ */
 @SuppressWarnings("serial")
 public class Mastermind extends JFrame implements ActionListener
 {
@@ -26,8 +41,12 @@ public class Mastermind extends JFrame implements ActionListener
 	private MasterContainer c;
 	private JMenuBar menubar;
 	private JMenu menu;
-	private JMenuItem exitItem;
+	private JMenuItem exitItem, startItem;
 	
+	/**
+	 * Konstruktor der Klasse Mastermind kümmert sich
+	 * um das Erzeugen und Anzeigen des Einstiegsfensters.
+	 */
 	public Mastermind()
 	{
 		super("Mastermind");
@@ -74,11 +93,18 @@ public class Mastermind extends JFrame implements ActionListener
 		menu = new JMenu("Optionen");
 		exitItem = new JMenuItem("Beenden");
 		exitItem.addActionListener(this);
+		startItem = new JMenuItem("Client-Server");
+		startItem.addActionListener(this);
 		menu.add(exitItem);
+		menu.add(startItem);
 		menubar.add(menu);
 		setJMenuBar(menubar);
 	}
 	
+	/**
+	 * Programmeinstiegspunkt für das Mastermind Programm
+	 * @param args Kommandozeilenargumente -> werden nicht benötigt
+	 */
 	public static void main(String[] args)
 	{
 		new Mastermind();
@@ -95,6 +121,11 @@ public class Mastermind extends JFrame implements ActionListener
 			dispose();
 		}else if(e.getSource() == exitItem){
 			System.exit(0);
+		}else if(e.getSource() == startItem)
+		{
+			new Server();
+			new Client();
+			dispose();
 		}
 	}
 	

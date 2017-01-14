@@ -40,6 +40,25 @@ import javax.swing.SwingConstants;
 import main.Command;
 import main.Server;
 
+/**
+ * Repräsentiert die Benutzeroberfläche des Server-Programms und liefert dessen UI-Thread.
+ * Es untergliedert sich in einen rechten Einstellungsbereich und einen linken Spielbereich,
+ * der ein CodePanel und ein HistoryPanel beinhaltet. Außerdem wird eine symmetrische
+ * Assoziation zur Server Klasse hergestellt. Nebensächliche Nachrichten bezüglich der Client-Server
+ * Kommunikation werden in der Nachrichtenbox unten rechts angezeigt. Wichtige Nachrichten werden
+ * über einen Dialog repräsentiert.<br/>
+ * Der Einstellungsbereich besitzt einen Aktualisierungsbutton der alle Einstellungen gültig macht
+ * und ansonsten JComboBoxes für den Modus und die Codelänge, sowie einen JSpinner für die Anzahl
+ * der Rateversuche. Außerdem kann der Port manuell geändert werden. Weitere Funktionen, wie das
+ * Anzeigen der Highscore oder trennen einer aktuell bestehenden Verbindung sind über die JMenuBar zu
+ * erreichen.<br/>
+ * Die ServerGui beinhaltet außerdem eine private JDialog Subklasse namens ServerColorChooser. Mit
+ * diesem JDialog lässt sich komfortabel die Farbpalette einstellen.<br/>
+ * <b>Wichtig:</b> Das Schließen der ServerGui veranlasst auch das Beenden des Server-Programms und
+ * beendet somit ein eventuell laufendes Spiel.
+ * @author Chris
+ * @category UI-Thread
+ */
 @SuppressWarnings("serial")
 public class ServerGui extends JFrame implements ActionListener, ItemListener
 {	
@@ -77,6 +96,13 @@ public class ServerGui extends JFrame implements ActionListener, ItemListener
 	
 	private Server server;
 	
+	/**
+	 * Konstruktor der ServerGui initialisert alle grafischen Komponenten des Serverprogramms.
+	 * Es werden Listener für die Benutzerinteraktion registriert und private Methoden zur
+	 * Erstellung der Teilbereiche aufgerufen. Diese Methoden sind initWest(), initEast() und
+	 * initMenu(). Es werden auch alle Defaulteinstellungen des Mastermind-Servers berücksichtigt.
+	 * @param server Serverprogramm
+	 */
 	public ServerGui(Server server)
 	{
 		super("Mastermind Server");
@@ -228,6 +254,13 @@ public class ServerGui extends JFrame implements ActionListener, ItemListener
 		setJMenuBar(menubar);
 	}
 	
+	/**
+	 * Versetzt die GUI in den Spielemodus.
+	 * Während diesem Zustand können keine weiteren
+	 * Einstellungen vorgenommen werden. Nur über das Menü
+	 * kann das aktuelle Spiel abgebrochen werden.
+	 * @category Zustand
+	 */
 	public void setToPlayMode()
 	{
 		modebox.setEnabled(false);
@@ -239,6 +272,14 @@ public class ServerGui extends JFrame implements ActionListener, ItemListener
 		disconnectItem.setEnabled(true);
 	}
 	
+	/**
+	 * Im Einstellungsmodus werden alle Spieleparameter
+	 * bis auf das zu erratende Codewort eingestellt.
+	 * Damit die EInstellungen in Kraft treten muss der Aktualisierungsbutton
+	 * gedrückt werden. Beim Programmstart muss dies auch geschehen um den
+	 * Server auf dem gewünschten Port zu starten.
+	 * @category Zustand
+	 */
 	public void setToSetupMode()
 	{
 		modebox.setEnabled(true);
@@ -250,33 +291,76 @@ public class ServerGui extends JFrame implements ActionListener, ItemListener
 		disconnectItem.setEnabled(false);
 	}
 	
+	/**
+	 * Fügt eine Client-Server Nachricht in die Nachrichtenbox oben ein.
+	 * @param msg Nachricht
+	 */
 	public void appendMessage(String msg){
 		String pre = messageBox.getText();
 		messageBox.setText(msg + "\n" + pre);
 	}
 	
+	/**
+	 * Entfernt alle Nachrichten aus der Nachrichtenbox.
+	 */
 	public void clearMessages(){
 		messageBox.setText("");
 	}
 	
+	/**
+	 * Leert den Verlaufsbereich.
+	 * Wird beim Start jeder Spielrunde automatisch aufgerufen. Kann
+	 * aber auch manuell während eines Spiels vom Menü aus aufgerufen werden.
+	 */
 	public void clearHistory(){
 		historyPanel.clearHistory((Integer)lengthbox.getSelectedItem());
 	}
 	
+	/**
+	 * Erzeugt einen JOptionPane Nachrichtendialog.
+	 * Findet bei der ServerGui hauptsächlich für Fehlermeldungen bzw.
+	 * getrennte Verbindungen Verwendung.
+	 * @param title Titel der Dialogbox
+	 * @param msg Nachricht im Dialogfenster
+	 */
 	public void showMessage(String title, String msg){
 		JOptionPane.showMessageDialog(this, msg, title, JOptionPane.INFORMATION_MESSAGE);
 	}
 	
+	/**
+	 * Liefert den vom Benutzer eingestellten Farbcode des CodePanels.
+	 * Wird von der Server-Klasse im manuellen Modus aufgerufen.
+	 * @return eingestellter Farbcode als String
+	 */
 	public String getChosenCode(){
 		return codePanel.getCode();
 	}
 	
+	/**
+	 * Dient dem Server zum setzten des zu erratenden Farbcodes.
+	 * Wird im automatischen Modus verwendet, um das zufällig generierte
+	 * Codewort anzuzeigen.
+	 * @param code Farbcode als Zeichenkette
+	 */
 	public void setCode(String code){
 		codePanel.setCode(code);
 	}
 	
+	/**
+	 * Fügt dem HistoryPanel eine neue Zeile hinzu.
+	 * @param colors geratene Farben des Clients als Farbwerte
+	 * @param rescode Resultat des Servers
+	 */
 	public void addGuess(Color[] colors, String rescode){
 		historyPanel.addButtons(colors, rescode);
+	}
+	
+	/**
+	 * Versteckt das zu erratene Codewort.
+	 */
+	public void disableButtons()
+	{
+		codePanel.setDisabled(true);
 	}
 	
 	private static class ServerContainer extends JPanel
@@ -296,6 +380,15 @@ public class ServerGui extends JFrame implements ActionListener, ItemListener
 		}
 	}
 
+	/**
+	 * Delegiert Klickereignisse an den Server oder startet entsprechende Dialoge.
+	 * Über die JMenuBar lässt sich das Codewort verstecken bzw. wieder anzeigen.
+	 * Der Aktualisierungsbutton startet den Server neu auf den angegeben Port und
+	 * initialisiert ihn mit den gemachten Einstellungen. Unter anderem lässt sich
+	 * über das Menü auch die HighscoreGui öffnen.
+	 * @param e Ereignisobjekt
+	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == chooseBtn){
@@ -335,6 +428,11 @@ public class ServerGui extends JFrame implements ActionListener, ItemListener
 		}
 	}
 
+	/**
+	 * Dient dazu dem Benutzer manuell das Ratewort einstellen zu lassen.
+	 * @param e Ereignisobjekt
+	 * @see java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
+	 */
 	@Override
 	public void itemStateChanged(ItemEvent e) {
 		if(e.getSource() == modebox){

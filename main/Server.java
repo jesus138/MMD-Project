@@ -10,6 +10,21 @@ import java.util.Random;
 
 import gui.ServerGui;
 
+/**
+ * Server-Programm des Mastermind Spiels. Startet den
+ * Netzwerkthread auf einen einstellbaren Port und wartet auf eine
+ * Clientverbindung. Dazu werden ein ServerSocket und ein (Client-)
+ * Socket verwendet. Die Klasse speichert außerdem alle notwendigen
+ * Informationen welche die Highscore und den aktuellen Spielzustand bzw.
+ * Verbindungsszustand betreffen. Sie ist eng verzahnt mit der ServerGui
+ * Klasse, mit welche den UI-Thread des Servers liefert. Dieser ist dem
+ * Netzwerkthread übergeordnet.
+ * <b>Wichtig:</b> Beim Start des Servers startet dieser noch keinen
+ * Netzwerkthread. Dies wird erst nach dem ersten Aktualisieren der
+ * SeverGui gemacht.
+ * @author Chris
+ * @category Netzwerkkomponente
+ */
 public class Server
 {
 	private int port;
@@ -20,9 +35,9 @@ public class Server
 	private int availableTries;
 	private ServerGui gui;
 	
-	public String colorcode;
-	public char[] availableColors;
-	public int codelength;
+	private String colorcode;
+	private char[] availableColors;
+	private int codelength;
 	private int tries;
 	
 	private volatile boolean running;
@@ -33,6 +48,11 @@ public class Server
 	private PrintWriter writer;
 	private BufferedReader reader;
 	
+	/**
+	 * Konstruktor erstellt die ServerGui für den Server.
+	 * Zudem werden Netzwerkport, Codelänge, Anzahl Versuche,
+	 * verfügbare Farben und Modus auf die Standardwerte gesetzt.
+	 */
 	public Server()
 	{
 		port = Command.DEFAULT_PORT;
@@ -44,6 +64,15 @@ public class Server
 		gui = new ServerGui(this);
 	}
 	
+	/**
+	 * Startet den Netzwerkthread welcher zunächst auf einen Client wartet.
+	 * Sollte sich ein Client verbunden haben geht der Server in den Spielezustand.
+	 * In diesem können vorerst keine Einstellungen mehr geändert werden.
+	 * Dabei schaut der Server alle 5 ms in den Lesekanal zum Client um
+	 * Kommandos entgegenzunehmen. Diese werden an die Funktion query() delegiert.
+	 * Sollten während einer noch stehenden Verbindung abprupte Probleme auftreten,
+	 * wird die Verbindung mit disconnect() geschlossen.
+	 */
 	public void connect()
 	{
 		new Thread(new Runnable(){
@@ -65,15 +94,28 @@ public class Server
 							if(reader.ready())
 								query(reader.readLine());
 							else Thread.sleep(5);
-						}catch(IOException ex){
-							try { clientSocket.close(); } catch (IOException e) {}
-						}catch(InterruptedException e){}
+						}catch(Exception ex){
+							disconnect();
+						}
 					}
 				}catch(IOException ex){}
 			}
 		}).start();
 	}
 	
+	/**
+	 * Verarbeitet alle vom Client empfangenen Kommandos und Nachrichten.
+	 * Diese werden nach dem Netzwerkprotokoll der Mastermind-Anwendung
+	 * mit einem StringBuilder zerlegt und entsprechend ausgewertet.<br/>
+	 * <ul>
+	 * <li>NEWGAME ruft setup() auf</li>
+	 * <li>CHECK ruft checkCode() auf</li>
+	 * <li>QUIT ruft disconnect() auf</li>
+	 * </ul>
+	 * Nicht spezifizierte Kommandos werden ignoriert.
+	 * @param cmd Kommando des Clients
+	 * @throws IOException
+	 */
 	public void query(String cmd) throws IOException
 	{
 		gui.appendMessage("Kommando empfangen: " + cmd);
@@ -97,6 +139,19 @@ public class Server
 		}
 	}
 	
+	/**
+	 * Schließt die stehende Verbindung und beendet den aktuell aktiven
+	 * Netzwerkthread. Die Datenkanäle werden nur geschlossen falls diese
+	 * nicht schon zuvor geschlossen wurden. Bevor sie geschlossen werden,
+	 * wird bei stehender Verbindung noch ein QUIT Kommando an den Client
+	 * gesendet, denn es handelt sich um ein vorzeitiges Beenden der des
+	 * Spiels. In jedem Falle wird die ServerGui wieder in den Setupmodus
+	 * gesetzt, um neue Einstellungen aktualisieren zu können bevor sich der
+	 * nächste Client verbindet.
+	 * <b>Beachten:</b> connect() wird am Ende dieser Funktion wieder aufgerufen.
+	 * Dies bedeutet, ein neuer Netzwerkthread ersetzt den alten, sodass sich
+	 * gleich wieder ein neuer Client verbinden könnte.
+	 */
 	public void disconnect()
 	{
 		try{
@@ -118,6 +173,20 @@ public class Server
 		connect();
 	}
 	
+	/**
+	 * Generiert den Resultatcode für einen Rateversuch.
+	 * Dabei werden zuerst komplett richtige Farben geprüft und diese
+	 * sowohl im richtigen Codewort als auch im Rateversuch als abgearbeitet
+	 * markiert. Danach werden die noch nicht abgearbeiteten Farben geprüft.
+	 * Sollte nichts richtig gewesen sein, dann bleibt das Resultat bei 0.
+	 * Ansonsten ist es eine entsprechende Kombination aus den Buchstaben B und W.
+	 * Dies ist auch in der Command Klasse spezifiziert. Über die noch verbliebene
+	 * Anzahl der Versuche, bzw. wenn nicht unendlich eingestellt ist, wird ermittelt
+	 * ob gewonnen, verloren wurde oder es normal weitergeht. Entsprechende
+	 * Kommandokombinationen werden an den Client gesendet. Sollte das Spiel zu Ende
+	 * sein wird writeToHighscore() aufgerufen.
+	 * @param codeguess Rateversuch des Clients
+	 */
 	public void checkCode(String codeguess)
 	{
 		String feedback = "0";
@@ -171,6 +240,20 @@ public class Server
 		writer.flush();
 	}
 	
+	/**
+	 * Ein Client hat sich verbunden, wodurch alle Einstellungen die zuvor
+	 * in der ServerGui gemacht wurden übernommen werden. Alle
+	 * spielzustandsrelevanten Daten werden initialisert und das zu
+	 * erratene Codewort wird zufällig generiert. Dies erfolgt jedoch nur
+	 * im Automatikmodus oder bei wiederholten Spielen. Im manuellen Modus
+	 * wird beim ersten Spiel des gerade verbundenen Clients das Codewort
+	 * aus dem vom Benutzer gewählten Codewort im CodePanel der ServerGui
+	 * extrahiert. Bei wiederholten Spielen desselben Clients wird aus
+	 * Verklemmungsvorbeugungsgründen der Automatikmodus verwendet.<br/>
+	 * Weiterhin wird der Verlaufsbereich geleert und dem Client werden
+	 * die Kommandos SETUP und GUESS geschickt.
+	 * @param playername Spielername für die Highscore
+	 */
 	public void setup(String playername)
 	{
 		this.playername = playername;
@@ -189,7 +272,10 @@ public class Server
 				codeSet[i] = pool[rand.nextInt(availableColors.length)];
 			colorcode = new String(codeSet);
 			gui.setCode(colorcode);
-		}else colorcode = gui.getChosenCode();
+		}else {
+			colorcode = gui.getChosenCode();
+			gui.disableButtons();
+		}
 		gui.clearHistory();
 		
 		clientKnown = true;
@@ -198,6 +284,16 @@ public class Server
 		writer.flush();
 	}
 	
+	/**
+	 * Aktualisiert die Einstellungen des Servers. Wenn sich ein Client
+	 * mit dem Server verbindet, werden die hier zuletzt aktualisierten
+	 * Werte für das kommende Spiel übernommen.
+	 * @param automatic Spielmodus
+	 * @param codelength Länge des zu erratenen Codeworts
+	 * @param colors Farbpalette
+	 * @param tries Anzahl Versuche
+	 * @param port Netzwerkport
+	 */
 	public void configure(boolean automatic, int codelength, String colors, int tries, int port)
 	{
 		this.automatic = automatic;
@@ -213,6 +309,16 @@ public class Server
 			disconnect();
 	}
 	
+	/**
+	 * Schreibt am Ende jeder Spielrunde die erreichte Punktzahl
+	 * des Spielers in die Highscoretabelle der Apache Derby Datenbank.
+	 * Für die Berechnung der Punktzahl werden die halb und komplett richtigen
+	 * Farbtreffer und die noch übrig gebliebenen Versuche positiv einbezogen.
+	 * Negativ auf die Punktzahl wirkt sich die Anzahl der eingestellten Versuche
+	 * aus. Sollten unendlich Versuche eingestellt wurden sein, so kann kein
+	 * Highscorewert erzielt werden.
+	 * @param won true -> Bonus
+	 */
 	public void writeToHighscore(boolean won){
 		int bonus = won ? 10000 : 100;
 		score = (50*halfright + 200*fullright + availableTries*300)/(tries+1) + bonus;
