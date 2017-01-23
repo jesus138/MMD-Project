@@ -19,10 +19,10 @@ import main.Command;
 
 /**
  * Die Klasse HistoryPanel stellt den scrollbaren Verlaufsbereich der ClientGui
- * und ServerGui dar. Sie enthält eine Liste von JPanels für die einzelnen
- * Rateversuche mit Ergebniscode. Weiterhin besitzt die Klasse eine feste Höhe, aber
- * eine dynamische Breite in Abhängigkeit von der Codelänge. Oberhalb des eigentlichen
- * Verlaufsbereichs befindet sich noch ein JLabel welches die Überschrift darstellt.
+ * und ServerGui dar. Sie enthaelt eine Liste von JPanels fuer die einzelnen
+ * Rateversuche mit Ergebniscode. Weiterhin besitzt die Klasse eine feste Hoehe, aber
+ * eine dynamische Breite in Abhaengigkeit von der Codelaenge. Oberhalb des eigentlichen
+ * Verlaufsbereichs befindet sich noch ein JLabel welches die ueberschrift darstellt.
  * @author Chris
  * @category Grafikkomponente
  */
@@ -39,10 +39,10 @@ public class HistoryPanel extends JPanel implements AdjustmentListener
 	
 	/**
 	 * Konstruktor zur Initialiserung der einzelnen Teilkomponenten und
-	 * definitives Festlegen der Höhe des Verlaufsbereichs.
+	 * definitives Festlegen der Hoehe des Verlaufsbereichs.
 	 * @param maxheight feste Maximalhoehe
-	 * @param window übergeordnetes Window bzw. JFrame
-	 * @param length anfänglich Codelänge
+	 * @param window uebergeordnetes Window bzw. JFrame
+	 * @param length anfaenglich Codelaenge
 	 */
 	public HistoryPanel(int maxheight, Window window, int length){
 		this.maxheight = maxheight;
@@ -84,7 +84,7 @@ public class HistoryPanel extends JPanel implements AdjustmentListener
 
 	/**
 	 * Implementierung des AdjustmentListeners zum anpassen der JPanel Positionen in
-	 * Abhängigkeit von der Scrollposition der Scrollbar.
+	 * Abhaengigkeit von der Scrollposition der Scrollbar.
 	 * @param e Ereignisobjekt
 	 * @see java.awt.event.AdjustmentListener#adjustmentValueChanged(java.awt.event.AdjustmentEvent)
 	 */
@@ -97,13 +97,13 @@ public class HistoryPanel extends JPanel implements AdjustmentListener
 	}
 	
 	/**
-	 * Fügt dem Verlaufsbereich ein weiteres JPanel mit den spezifierten Werten visuell ganz oben ein.
+	 * Fuegt dem Verlaufsbereich ein weiteres JPanel mit den spezifierten Werten visuell ganz oben ein.
 	 * Dabei werden alle Dimensionen neu berechnet und die eventuell neue maximale Breite des Verlaufsbereichs
-	 * bestimmt. Auch die Positionen der einzelnen JPanels sowie deren RoundButtons und der Scrollbar müssen
-	 * neu berechnet werden. Dazu müssen viele Layoutberechnungen auf dem UI-Thread vorgenommen werden. Deshalb
-	 * wird das entfernen aller Komponenten und das darauffolgende Neueinfügen in die EventQueue des UI-Threads
+	 * bestimmt. Auch die Positionen der einzelnen JPanels sowie deren RoundButtons und der Scrollbar muessen
+	 * neu berechnet werden. Dazu muessen viele Layoutberechnungen auf dem UI-Thread vorgenommen werden. Deshalb
+	 * wird das entfernen aller Komponenten und das darauffolgende Neueinfuegen in die EventQueue des UI-Threads
 	 * eingereiht. Dies vermeidet ansonsten anzutreffende RuntimeExceptions, die durch gleichzeitiges Zugreifen
-	 * auf GUI-Elemente zurückzuführen sind.
+	 * auf GUI-Elemente zurueckzufuehren sind.
 	 * @param colors der geratene Farbcode
 	 * @param rescode Resultat des Servers
 	 */
@@ -173,11 +173,11 @@ public class HistoryPanel extends JPanel implements AdjustmentListener
 	}
 	
 	/**
-	 * Entfernt und löscht alle JPanels welche Rateversuche darstellen.
+	 * Entfernt und loescht alle JPanels welche Rateversuche darstellen.
 	 * Die neue Breite des Verlaufsbereichs sollte hierbei vorerst festgelegt werden.
-	 * Die Länge bezieht sich auf die Länge des Farbcodes und nicht auf die Länge in Pixel,
-	 * welche nämlich durch die private Funktion setMaxWidth() erst berechnet wird.
-	 * Grundsätzlich sollte die aktuell eingestellte Farbcodelänge übergeben werden.
+	 * Die Laenge bezieht sich auf die Laenge des Farbcodes und nicht auf die Laenge in Pixel,
+	 * welche naemlich durch die private Funktion setMaxWidth() erst berechnet wird.
+	 * Grundsaetzlich sollte die aktuell eingestellte Farbcodelaenge uebergeben werden.
 	 * @param length Breite des Verlaufsbereichs nach dem Leeren - Angabe in Anzahl RoundButtons
 	 */
 	public void clearHistory(int length){

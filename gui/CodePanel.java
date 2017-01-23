@@ -13,10 +13,10 @@ import javax.swing.SwingConstants;
 import main.Command;
 
 /**
- * Repräsentiert den Farbauswahlbereich des Clients und den Bereich des Servers,
+ * Repraesentiert den Farbauswahlbereich des Clients und den Bereich des Servers,
  * welcher den zu ratenden Code anzeigt. Beinhaltet eine Ueberschrift, sowie eine
  * Reihe von RoundButtons. Obwohl diese Komponente von sowohl ClientGui und ServerGui
- * verwendet wird, bietet sie für beide unterschiedliche Funktionalitäten an.
+ * verwendet wird, bietet sie fuer beide unterschiedliche Funktionalitaeten an.
  * @author Chris
  * @category Grafikkomponente
  */
@@ -30,12 +30,12 @@ public class CodePanel extends JPanel
 	private boolean disabled;
 	
 	/**
-	 * Konstruktor des CodePanels, der alle benötigten Teilkomponenten initialisiert
-	 * und dem Bereich eine anfängliche Dimension in Abhängigkeit zur Codelänge gibt.
+	 * Konstruktor des CodePanels, der alle benoetigten Teilkomponenten initialisiert
+	 * und dem Bereich eine anfaengliche Dimension in Abhaengigkeit zur Codelaenge gibt.
 	 * @param title Ueberschrift des CodePanels
 	 * @param window Containerbereich der Komponente; eigentlich immer ein JFrame
-	 * @param palette erlaubte Farben für Auswahldialog
-	 * @param codelength Codelänge bestimmt die Anzahl der dargestellten RoundButtons
+	 * @param palette erlaubte Farben fuer Auswahldialog
+	 * @param codelength Codelaenge bestimmt die Anzahl der dargestellten RoundButtons
 	 */
 	public CodePanel(String title, Window window, Color[] palette, int codelength)
 	{
@@ -57,7 +57,7 @@ public class CodePanel extends JPanel
 	
 	/**
 	 * Erlaubt dem Server, das zu erratende Codewort visuell zu verschleiern.
-	 * Nützlich ist dies wenn das Client- und Server-Programm am selben Bildschirm
+	 * Nuetzlich ist dies wenn das Client- und Server-Programm am selben Bildschirm
 	 * angezeigt werden.
 	 * @param hidden true -> Farbcode wird versteckt / false -> Farbcode wird wieder angezeigt
 	 */
@@ -70,11 +70,11 @@ public class CodePanel extends JPanel
 	}
 	
 	/**
-	 * Zählt alle RoundButtons durch und wandelt dessen Farbe in den dazugehörigen
+	 * Zaehlt alle RoundButtons durch und wandelt dessen Farbe in den dazugehoerigen
 	 * Character um. Baut diese zu einem String zusammen.<br/>
 	 * Verwendung findet diese Funktion vor allem vom Client-Programm, aber auch
 	 * vom Server bei manueller Farbauswahl.
-	 * @return Zeichenkettenrepräsentation des gewählten Farbcodes
+	 * @return Zeichenkettenrepraesentation des gewaehlten Farbcodes
 	 */
 	public String getCode()
 	{
@@ -86,10 +86,10 @@ public class CodePanel extends JPanel
 	
 	/**
 	 * Aktualisiert die Anzahl und Auswahldialoge der RoundButtons und sorgt
-	 * für eine Neuberechnung des Gesamtlayouts.<br/>
-	 * Die Änderung des Layouts wird in die EventQueue des UI-Threads eingereiht, sodass
-	 * sichergestellt ist, dass keine gleichzeitigen Zugriffe auf Oberflächenelemente erfolgen.
-	 * @param palette neue Farbpalette für Auswahldialoge
+	 * fuer eine Neuberechnung des Gesamtlayouts.<br/>
+	 * Die aenderung des Layouts wird in die EventQueue des UI-Threads eingereiht, sodass
+	 * sichergestellt ist, dass keine gleichzeitigen Zugriffe auf Oberflaechenelemente erfolgen.
+	 * @param palette neue Farbpalette fuer Auswahldialoge
 	 * @param codelength neue Anzahl der RoundButtons
 	 */
 	public void changePanel(Color[] palette, int codelength)
@@ -112,11 +112,11 @@ public class CodePanel extends JPanel
 	
 	/**
 	 * Erlaubt das Ein- und Ausschalten der Farbauswahldialoge. Der Client wird
-	 * diese Funktion jedoch nicht verwenden, da grundsätzlich die Farben ausgewählt
-	 * werden können bzw. im Automatikmodus ignoriert werden können. Hingegen
+	 * diese Funktion jedoch nicht verwenden, da grundsaetzlich die Farben ausgewaehlt
+	 * werden koennen bzw. im Automatikmodus ignoriert werden koennen. Hingegen
 	 * verwendet der Server diese Funktion im manuellen Modus, sodass sich gezielt
-	 * ein zu ratendes Codewort einstellen lässt bzw. diese Funktion wieder ausstellen
-	 * lässt.
+	 * ein zu ratendes Codewort einstellen laesst bzw. diese Funktion wieder ausstellen
+	 * laesst.
 	 * @param disabled true -> kein Auswahldialog / false -> mit Auswahldialog
 	 */
 	public void setDisabled(boolean disabled)
@@ -130,7 +130,7 @@ public class CodePanel extends JPanel
 	}
 	
 	/**
-	 * Färbt die RoundButtons bezüglich des aktuellen Codeworts ein.
+	 * Faerbt die RoundButtons bezueglich des aktuellen Codeworts ein.
 	 * Wird nur vom Server bei automatischer Codegeneration verwendet.
 	 * @param code anzuzeigendes Codewort
 	 */

@@ -13,7 +13,7 @@ import java.util.Vector;
  * Modelliert eine Apache Derby Datenbank und speichert in
  * dieser die erzielten Punktzahlen der Spieler. Bei Apache
  * Derby handelt es sich um eine direkt im JDK enthaltene
- * Datenbank, muss jedoch aus Portabilitätsgründen extern
+ * Datenbank, muss jedoch aus Portabilitaetsgruenden extern
  * eingebunden werden. Zum Kompilieren muss das Java Archiv
  * <b>derby.jar</b> vorhanden sein.<br/>
  * <b>Wichtig:</b> Sollte derby.jar fehlen, werden Exceptions
@@ -51,7 +51,7 @@ public class Highscore
 	public static final int ORDER_DESC = (ORDER_TYPE.DESC).ordinal();
 	
 	/**
-	 * POJO Klasse für einen Datenbankeintrag.
+	 * POJO Klasse fuer einen Datenbankeintrag.
 	 * Verwendet von der HighscoreGui, um ein
 	 * Array aus Zeilenobjekten als HTML-Tabelle
 	 * darzustellen.
@@ -114,7 +114,7 @@ public class Highscore
 	/**
 	 * Schreibt ein neues Wertepaar in die Highscoretabelle.
 	 * Falls der Name schon in der Tabelle existiert wird die Punktzahl
-	 * nur überschrieben, falls diese größer als die bisherige ist.
+	 * nur ueberschrieben, falls diese groesser als die bisherige ist.
 	 * @param name Spielername
 	 * @param score erzielte Punktzahl
 	 * @return false -> Fehler / true -> sonst
@@ -139,7 +139,7 @@ public class Highscore
 		}catch(ClassNotFoundException e){
 			//System.out.println("Treiberproblem: " + e.getMessage());
 		}catch(SQLException e){
-			//System.out.println("Fehler beim Einfügen: " + e.getMessage());
+			//System.out.println("Fehler beim Einfuegen: " + e.getMessage());
 		}
 		return inserted;
 	}
@@ -166,8 +166,8 @@ public class Highscore
 	}
 	
 	/**
-	 * <b>Achtung:</b> Löscht alle Einträge der Datenbanktabelle
-	 * und kann nicht rückgängig gemacht werden. Diese Funktion ist
+	 * <b>Achtung:</b> Loescht alle Eintraege der Datenbanktabelle
+	 * und kann nicht rueckgaengig gemacht werden. Diese Funktion ist
 	 * direkt von der HighscoreGui aufrufbar.
 	 */
 	public static void deleteEverything()
@@ -182,12 +182,12 @@ public class Highscore
 		}catch(ClassNotFoundException e){
 			System.out.println("Treiberproblem: " + e.getMessage());
 		}catch(SQLException e){
-			System.out.println("Fehler beim Löschen: " + e.getMessage());
+			System.out.println("Fehler beim Loeschen: " + e.getMessage());
 		}
 	}
 	
 	/**
-	 * Es wird in Abhängigkeit von der Sortieroption ein
+	 * Es wird in Abhaengigkeit von der Sortieroption ein
 	 * Abfragenausdruck aufgebaut, um entweder nach Reihenfolge
 	 * der Zeilen-IDs oder nach auf- bzw. absteigender Reihenfolge
 	 * der Highscorewerte zu sortieren. Geliefert werden alle

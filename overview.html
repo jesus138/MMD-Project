@@ -1,0 +1,21 @@
+<html>
+<body>
+Mastermind ist ein Rate-Denkspiel und wurde als Client-Server Anwendung realisiert.
+<p>
+	Das Programm lässt sich in einen server- und einen clientseitigen Teil
+	untergliedern. Beide werden im main-Paket durch die Klassen Client und Server
+	implementiert und besitzen eine dazugehörige grafische Benutzeroberfläche. Diese
+	Benutzeroberflächen werden entsprechend durch ClientGui und ServerGui im gui Paket
+	definiert.<br/>
+	Haupteinstiegspunkt, und deshalb im main-Paket, ist die Klasse Mastermind, welche
+	die main() Methode enthält. Standardmäßig wird nach Programmstart der Server oder
+	der Client ausgewählt, so dass für Client und Server das Programm doppelt gestartet
+	werden muss. Dies liegt an der Tatsache, dass sich der Client und der Server auf
+	völlig unterschiedlichen Rechnern befinden können. Allerdings gibt es auch die
+	Möglichkeit beide zugleich in einem Programm zu starten.<br/>
+	Weiterhin wird zur Abspeicherung der Highscore eine Apache Derby Datenbank von Oracle
+	verwendet. Der Treiber dieser Datenbank befindet sich im Archiv derby.jar, welches mit
+	dem JDK von Java mitgeliefert wird.
+</p>
+</body>
+</html>

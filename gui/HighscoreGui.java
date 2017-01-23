@@ -20,8 +20,8 @@ import main.Highscore;
 /**
  * Dient dem anzeigen der Highscore ausgehend vom Server-Programm.
  * Dieses Fenster gliedert sich in den UI-Thread der ServerGui ein und
- * lässt diesen bei Beendigung unverändert. Die Highscore wird als HTML-Tabelle
- * dargestellt und lässt sich nach Wunsch sortieren.
+ * laesst diesen bei Beendigung unveraendert. Die Highscore wird als HTML-Tabelle
+ * dargestellt und laesst sich nach Wunsch sortieren.
  * @author Chris
  * @category Grafikkomponente
  */
@@ -62,10 +62,10 @@ public class HighscoreGui extends JFrame implements ActionListener
 	private JMenuItem deleteItem;
 	
 	/**
-	 * Konstruktor übernimmt das erzeugen der Oberfläche, indem er vor allem
-	 * die Funktionen makeMenu() und showRows() aufruft. Außerdem wird eine
-	 * feste Größe festgelegt sowie ein entsprechender Listener registriert,
-	 * um über das Menü die Highscoretabelle sortieren zu können.
+	 * Konstruktor uebernimmt das erzeugen der Oberflaeche, indem er vor allem
+	 * die Funktionen makeMenu() und showRows() aufruft. Ausserdem wird eine
+	 * feste Groesse festgelegt sowie ein entsprechender Listener registriert,
+	 * um ueber das Menue die Highscoretabelle sortieren zu koennen.
 	 */
 	public HighscoreGui()
 	{
@@ -90,11 +90,11 @@ public class HighscoreGui extends JFrame implements ActionListener
 	{
 		menubar = new JMenuBar();
 		menu = new JMenu("Aktionen");
-		quitItem = new JMenuItem("Schließen");
+		quitItem = new JMenuItem("Schliessen");
 		sortNormal = new JMenuItem("Default");
 		sortAsc = new JMenuItem("Sortieren ASC");
 		sortDes = new JMenuItem("Sortieren DESC");
-		deleteItem = new JMenuItem("Tabelle löschen");
+		deleteItem = new JMenuItem("Tabelle loeschen");
 		sortNormal.addActionListener(this);
 		quitItem.addActionListener(this);
 		sortAsc.addActionListener(this);
@@ -155,7 +155,7 @@ public class HighscoreGui extends JFrame implements ActionListener
 		}
 		else if(e.getSource() == deleteItem)
 		{
-			int option = JOptionPane.showConfirmDialog(this, "Wollen Sie wirklich alle Einträge\nin der Datenbank löschen?",
+			int option = JOptionPane.showConfirmDialog(this, "Wollen Sie wirklich alle Eintraege\nin der Datenbank loeschen?",
 					"Sind Sie sicher?", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 			if(option == JOptionPane.YES_OPTION)
 				Highscore.deleteEverything();

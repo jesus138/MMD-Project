@@ -41,20 +41,20 @@ import main.Command;
 import main.Server;
 
 /**
- * Repräsentiert die Benutzeroberfläche des Server-Programms und liefert dessen UI-Thread.
+ * Repraesentiert die Benutzeroberflaeche des Server-Programms und liefert dessen UI-Thread.
  * Es untergliedert sich in einen rechten Einstellungsbereich und einen linken Spielbereich,
- * der ein CodePanel und ein HistoryPanel beinhaltet. Außerdem wird eine symmetrische
- * Assoziation zur Server Klasse hergestellt. Nebensächliche Nachrichten bezüglich der Client-Server
+ * der ein CodePanel und ein HistoryPanel beinhaltet. Ausserdem wird eine symmetrische
+ * Assoziation zur Server Klasse hergestellt. Nebensaechliche Nachrichten bezueglich der Client-Server
  * Kommunikation werden in der Nachrichtenbox unten rechts angezeigt. Wichtige Nachrichten werden
- * über einen Dialog repräsentiert.<br/>
- * Der Einstellungsbereich besitzt einen Aktualisierungsbutton der alle Einstellungen gültig macht
- * und ansonsten JComboBoxes für den Modus und die Codelänge, sowie einen JSpinner für die Anzahl
- * der Rateversuche. Außerdem kann der Port manuell geändert werden. Weitere Funktionen, wie das
- * Anzeigen der Highscore oder trennen einer aktuell bestehenden Verbindung sind über die JMenuBar zu
+ * ueber einen Dialog repraesentiert.<br/>
+ * Der Einstellungsbereich besitzt einen Aktualisierungsbutton der alle Einstellungen gueltig macht
+ * und ansonsten JComboBoxes fuer den Modus und die Codelaenge, sowie einen JSpinner fuer die Anzahl
+ * der Rateversuche. Ausserdem kann der Port manuell geaendert werden. Weitere Funktionen, wie das
+ * Anzeigen der Highscore oder trennen einer aktuell bestehenden Verbindung sind ueber die JMenuBar zu
  * erreichen.<br/>
- * Die ServerGui beinhaltet außerdem eine private JDialog Subklasse namens ServerColorChooser. Mit
- * diesem JDialog lässt sich komfortabel die Farbpalette einstellen.<br/>
- * <b>Wichtig:</b> Das Schließen der ServerGui veranlasst auch das Beenden des Server-Programms und
+ * Die ServerGui beinhaltet ausserdem eine private JDialog Subklasse namens ServerColorChooser. Mit
+ * diesem JDialog laesst sich komfortabel die Farbpalette einstellen.<br/>
+ * <b>Wichtig:</b> Das Schliessen der ServerGui veranlasst auch das Beenden des Server-Programms und
  * beendet somit ein eventuell laufendes Spiel.
  * @author Chris
  * @category UI-Thread
@@ -98,9 +98,9 @@ public class ServerGui extends JFrame implements ActionListener, ItemListener
 	
 	/**
 	 * Konstruktor der ServerGui initialisert alle grafischen Komponenten des Serverprogramms.
-	 * Es werden Listener für die Benutzerinteraktion registriert und private Methoden zur
+	 * Es werden Listener fuer die Benutzerinteraktion registriert und private Methoden zur
 	 * Erstellung der Teilbereiche aufgerufen. Diese Methoden sind initWest(), initEast() und
-	 * initMenu(). Es werden auch alle Defaulteinstellungen des Mastermind-Servers berücksichtigt.
+	 * initMenu(). Es werden auch alle Defaulteinstellungen des Mastermind-Servers beruecksichtigt.
 	 * @param server Serverprogramm
 	 */
 	public ServerGui(Server server)
@@ -155,7 +155,7 @@ public class ServerGui extends JFrame implements ActionListener, ItemListener
 		settingsPanel.setOpaque(false);
 		modebox = new JComboBox<>(MODES);
 		modebox.addItemListener(this);
-		lengthLabel = new JLabel("Codelänge");
+		lengthLabel = new JLabel("Codelaenge");
 		Vector<Integer> lengths = new Vector<>();
 		for(int i=2; i<=15; i++) lengths.add(i);
 		lengthbox = new JComboBox<>(lengths);
@@ -239,9 +239,9 @@ public class ServerGui extends JFrame implements ActionListener, ItemListener
 		highscoreItem.addActionListener(this);
 		disconnectItem = new JMenuItem("Sitzung beenden");
 		disconnectItem.addActionListener(this);
-		clearMessageItem = new JMenuItem("Nachrichten löschen");
+		clearMessageItem = new JMenuItem("Nachrichten loeschen");
 		clearMessageItem.addActionListener(this);
-		clearCourseItem = new JMenuItem("Verlauf löschen");
+		clearCourseItem = new JMenuItem("Verlauf loeschen");
 		clearCourseItem.addActionListener(this);
 		menu.add(exitItem);
 		menu.add(hideItem);
@@ -256,8 +256,8 @@ public class ServerGui extends JFrame implements ActionListener, ItemListener
 	
 	/**
 	 * Versetzt die GUI in den Spielemodus.
-	 * Während diesem Zustand können keine weiteren
-	 * Einstellungen vorgenommen werden. Nur über das Menü
+	 * Waehrend diesem Zustand koennen keine weiteren
+	 * Einstellungen vorgenommen werden. Nur ueber das Menue
 	 * kann das aktuelle Spiel abgebrochen werden.
 	 * @category Zustand
 	 */
@@ -276,8 +276,8 @@ public class ServerGui extends JFrame implements ActionListener, ItemListener
 	 * Im Einstellungsmodus werden alle Spieleparameter
 	 * bis auf das zu erratende Codewort eingestellt.
 	 * Damit die EInstellungen in Kraft treten muss der Aktualisierungsbutton
-	 * gedrückt werden. Beim Programmstart muss dies auch geschehen um den
-	 * Server auf dem gewünschten Port zu starten.
+	 * gedrueckt werden. Beim Programmstart muss dies auch geschehen um den
+	 * Server auf dem gewuenschten Port zu starten.
 	 * @category Zustand
 	 */
 	public void setToSetupMode()
@@ -292,7 +292,7 @@ public class ServerGui extends JFrame implements ActionListener, ItemListener
 	}
 	
 	/**
-	 * Fügt eine Client-Server Nachricht in die Nachrichtenbox oben ein.
+	 * Fuegt eine Client-Server Nachricht in die Nachrichtenbox oben ein.
 	 * @param msg Nachricht
 	 */
 	public void appendMessage(String msg){
@@ -310,7 +310,7 @@ public class ServerGui extends JFrame implements ActionListener, ItemListener
 	/**
 	 * Leert den Verlaufsbereich.
 	 * Wird beim Start jeder Spielrunde automatisch aufgerufen. Kann
-	 * aber auch manuell während eines Spiels vom Menü aus aufgerufen werden.
+	 * aber auch manuell waehrend eines Spiels vom Menue aus aufgerufen werden.
 	 */
 	public void clearHistory(){
 		historyPanel.clearHistory((Integer)lengthbox.getSelectedItem());
@@ -318,7 +318,7 @@ public class ServerGui extends JFrame implements ActionListener, ItemListener
 	
 	/**
 	 * Erzeugt einen JOptionPane Nachrichtendialog.
-	 * Findet bei der ServerGui hauptsächlich für Fehlermeldungen bzw.
+	 * Findet bei der ServerGui hauptsaechlich fuer Fehlermeldungen bzw.
 	 * getrennte Verbindungen Verwendung.
 	 * @param title Titel der Dialogbox
 	 * @param msg Nachricht im Dialogfenster
@@ -337,8 +337,17 @@ public class ServerGui extends JFrame implements ActionListener, ItemListener
 	}
 	
 	/**
+	 * Stellt die tatsaechliche Adresse des Servers dar.
+	 * Dient zu administrativen Zwecken.
+	 * @param address Hostadresse des Servers
+	 */
+	public void showHostAddress(String address){
+		hostField.setText(address);
+	}
+	
+	/**
 	 * Dient dem Server zum setzten des zu erratenden Farbcodes.
-	 * Wird im automatischen Modus verwendet, um das zufällig generierte
+	 * Wird im automatischen Modus verwendet, um das zufaellig generierte
 	 * Codewort anzuzeigen.
 	 * @param code Farbcode als Zeichenkette
 	 */
@@ -347,7 +356,7 @@ public class ServerGui extends JFrame implements ActionListener, ItemListener
 	}
 	
 	/**
-	 * Fügt dem HistoryPanel eine neue Zeile hinzu.
+	 * Fuegt dem HistoryPanel eine neue Zeile hinzu.
 	 * @param colors geratene Farben des Clients als Farbwerte
 	 * @param rescode Resultat des Servers
 	 */
@@ -382,10 +391,10 @@ public class ServerGui extends JFrame implements ActionListener, ItemListener
 
 	/**
 	 * Delegiert Klickereignisse an den Server oder startet entsprechende Dialoge.
-	 * Über die JMenuBar lässt sich das Codewort verstecken bzw. wieder anzeigen.
+	 * ueber die JMenuBar laesst sich das Codewort verstecken bzw. wieder anzeigen.
 	 * Der Aktualisierungsbutton startet den Server neu auf den angegeben Port und
-	 * initialisiert ihn mit den gemachten Einstellungen. Unter anderem lässt sich
-	 * über das Menü auch die HighscoreGui öffnen.
+	 * initialisiert ihn mit den gemachten Einstellungen. Unter anderem laesst sich
+	 * ueber das Menue auch die HighscoreGui oeffnen.
 	 * @param e Ereignisobjekt
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
@@ -454,7 +463,7 @@ public class ServerGui extends JFrame implements ActionListener, ItemListener
 		
 		public ServerColorChooser()
 		{
-			setTitle("Farben auswwählen");
+			setTitle("Farben auswwaehlen");
 			setLayout(new BorderLayout());
 			setModal(true);
 			makeTop();

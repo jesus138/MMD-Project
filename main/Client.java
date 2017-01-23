@@ -10,11 +10,11 @@ import gui.ClientGui;
 
 /**
  * Das Client-Programm des Mastermind Spiels.
- * Stellt einen clientseitigen Socket zur Verfügung und startet
+ * Stellt einen clientseitigen Socket zur Verfuegung und startet
  * nach dessen erfolgreichen Initialisierung den Netzwerkthread.
- * Enthält alle notwendigen clientseitigen Einstellungen wie den
- * Spielernamen, die Codelänge oder den gerade geratenen Farbcode.
- * Außerdem wird die KI Klasse referenziert und im Automatikmodus
+ * Enthaelt alle notwendigen clientseitigen Einstellungen wie den
+ * Spielernamen, die Codelaenge oder den gerade geratenen Farbcode.
+ * Ausserdem wird die KI Klasse referenziert und im Automatikmodus
  * verwendet.<br/>
  * Die Klasse Client ist mit einer entsprechenden ClientGui Klasse assoziiert.
  * @author Chris
@@ -46,7 +46,7 @@ public class Client
 	
 	/**
 	 * Versucht eine Verbindung zum Server aufzubauen. Falls
-	 * erfolgreich werden die Datenkanäle initialisiert, die GUI
+	 * erfolgreich werden die Datenkanaele initialisiert, die GUI
 	 * wird in den Einstellungsmodus versetzt und es wird
 	 * die Methode receive() aufgerufen, welche Kommandos des Servers
 	 * einliest. Sollte keine Verbindung herzustellen sein, wird
@@ -70,7 +70,7 @@ public class Client
 	/**
 	 * Trennt eine eventuell bestehende Verbindung zum Server.
 	 * Sollte eine Verbindung derzeitig noch bestehen werden alle
-	 * Datenkanäle geschlossen und das QUIT-Kommando an den Server
+	 * Datenkanaele geschlossen und das QUIT-Kommando an den Server
 	 * gesendet. In jedem Falle wird die ClientGui wieder in den
 	 * Verbindungsmodus gesetzt. 
 	 */
@@ -96,8 +96,8 @@ public class Client
 	 * Startet den Netzwerkthread des Client-Programms.
 	 * Der Netzwerkthread schaut alle 5 ms nach ob der Server
 	 * ein Kommando gesendet hat. Wenn ja wird dieses an die
-	 * query() Funktion zur Verarbeitung übermittelt. Hierbei
-	 * werden auch alle möglicherweise auftretenden Exceptions
+	 * query() Funktion zur Verarbeitung uebermittelt. Hierbei
+	 * werden auch alle moeglicherweise auftretenden Exceptions
 	 * abgefangen. In diesem Falle wird die Verbindung mittels
 	 * disconnect() geschlossen und die Threadschleife endet.
 	 */
@@ -125,8 +125,8 @@ public class Client
 	 * Mastermind-Netzwerkprotokolls und mit Funktionen der Klasse
 	 * StringBuilder.<br/>
 	 * <ul>
-	 * <li>SETUP führt zum Aufruf von startGame()</li>
-	 * <li>GUESS bezieht im Automatikmodus die KI ein</li>
+	 * <li>SETUP fuehrt zum Aufruf von startGame()</li>
+	 * <li>GUEss bezieht im Automatikmodus die KI ein</li>
 	 * <li>RESULT ruft addGuess() von der GUI auf bzw. liefert der KI
 	 * den Resultatstring</li>
 	 * <li>GAMEOVER und QUIT rufen endGame() mit jeweils unterschiedlichen
@@ -166,7 +166,9 @@ public class Client
 				ki.nextRes(result);
 		}
 		else if(running && cmdF.equalsIgnoreCase(Command.GAMEOVER)){
-			if(automatic) autorounds--;
+			running = false;
+			if(automatic)
+				autorounds--;
 			String result = builder.substring(sep+1);
 			endGame(result);
 		}
@@ -188,28 +190,26 @@ public class Client
 	}
 	
 	/**
-	 * Geht in den Spielzustandsmodus über.
+	 * Geht in den Spielzustandsmodus ueber.
 	 * Falls Client im Automatikmodus ist wird die
 	 * KI initialisiert.
-	 * @param codelength Länge des zu erratenen Codewortes
-	 * @param colors Farbpalette als Zeichenkettenrepräsentation
+	 * @param codelength Laenge des zu erratenen Codewortes
+	 * @param colors Farbpalette als Zeichenkettenrepraesentation
 	 */
 	public void startGame(int codelength, String colors)
 	{
 		this.codelength = codelength;
 		running = true;
 		if(!automatic)
-		{
-			gui.setupGui(Command.getColors(colors), this.codelength);
 			gui.setToGuessMode();
-		}
 		else
-			ki = new KI(colors, codelength);
+			ki = new KI(codelength, colors);
+		gui.setupGui(Command.getColors(colors), this.codelength);
 	}
 	
 	/**
 	 * Beendet die aktuelle Runde.
-	 * Spieler wird über GUI Funktion again() gefragt ob er weiter spielen will.
+	 * Spieler wird ueber GUI Funktion again() gefragt ob er weiter spielen will.
 	 * Im Automatikmodus wird weitergemacht, insofern noch offene Runden ausstehen.
 	 * @param result
 	 * falls null dann Verbindungsabbruch
@@ -219,7 +219,7 @@ public class Client
 	{
 		if(result != null){
 			gui.showMessage("Spiel zu Ende", (result.equals(Command.GAMEOVER_WIN) ?
-					"Glückwunsch! Sie haben gewonnen." : "Schade, leider verloren."));
+					"Glueckwunsch! Sie haben gewonnen." : "Schade, leider verloren."));
 			if(!automatic)
 				gui.again();
 			else
@@ -246,10 +246,10 @@ public class Client
 	
 	/**
 	 * Versetzt die GUI und den Client in den Automatikmodus.
-	 * Anschließend wird newGame() aufgerufen um den Server
+	 * Anschliessend wird newGame() aufgerufen um den Server
 	 * mitzuteilen, dass eine neue Spielrunde gestartet werden soll.
 	 * @param rounds Anzahl der zu spielenden Runden
-	 * @param playername Spielername für den Server
+	 * @param playername Spielername fuer den Server
 	 */
 	public void autoPlay(int rounds, String playername)
 	{

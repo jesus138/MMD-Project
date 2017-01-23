@@ -20,13 +20,13 @@ import javax.swing.SwingConstants;
 
 /**
  * Implementiert das Einstiegsfenster und den zentralen Einstiegspunkt
- * in das Programm. Lässt dem Anwender die Möglichkeit den Client
- * oder den Server zu starten. In jedem Fall schließt sich das
+ * in das Programm. Laesst dem Anwender die Moeglichkeit den Client
+ * oder den Server zu starten. In jedem Fall schliesst sich das
  * Einstiegsfenster und der main-Thread wird der UI-Thread des Clients
  * oder des Servers. Da das Programm als Client-Server Anwendung gedacht ist
  * und mit Programmen interagieren soll, die dem selben Netzwerkprotokoll folgen,
- * sollten Client und Server separat gestartet werden. Es besteht jedoch über
- * das Menü auch die Möglichkeit Client und Server zugleich im selben Thread zu
+ * sollten Client und Server separat gestartet werden. Es besteht jedoch ueber
+ * das Menue auch die Moeglichkeit Client und Server zugleich im selben Thread zu
  * starten. Dies ist komfortabel, wenn sich Client und Server auf dem selben Rechner
  * befinden und nur untereinander kommunizieren sollen. Sollte in diesem Falle jedoch
  * einer der beiden beendet werden, beendet sich das gesamte Programm.
@@ -44,7 +44,7 @@ public class Mastermind extends JFrame implements ActionListener
 	private JMenuItem exitItem, startItem;
 	
 	/**
-	 * Konstruktor der Klasse Mastermind kümmert sich
+	 * Konstruktor der Klasse Mastermind kuemmert sich
 	 * um das Erzeugen und Anzeigen des Einstiegsfensters.
 	 */
 	public Mastermind()
@@ -66,7 +66,7 @@ public class Mastermind extends JFrame implements ActionListener
 	{
 		c.setLayout(new BorderLayout());
 		caption = new JLabel("Mastermind");
-		caption.setFont(new Font("SansSerif", Font.BOLD, 50));
+		caption.setFont(new Font("Sansserif", Font.BOLD, 50));
 		caption.setHorizontalAlignment(SwingConstants.CENTER);
 		serverBtn = new JButton("Server");
 		serverBtn.addActionListener(this);
@@ -102,8 +102,8 @@ public class Mastermind extends JFrame implements ActionListener
 	}
 	
 	/**
-	 * Programmeinstiegspunkt für das Mastermind Programm
-	 * @param args Kommandozeilenargumente -> werden nicht benötigt
+	 * Programmeinstiegspunkt fuer das Mastermind Programm
+	 * @param args Kommandozeilenargumente -> werden nicht benoetigt
 	 */
 	public static void main(String[] args)
 	{

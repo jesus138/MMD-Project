@@ -23,9 +23,9 @@ import main.Command;
 /**
  * RoundButton erweitert das Swing Standard Widget JButton. Dazu
  * muss ebenfalls das Interface MouseListener implementiert werden,
- * um in Abhängigkeit von der Mausinteraktion mit der Komponente
- * visuelles Feedback zu geben. Außerdem beinhaltet RoundButton
- * bereits einen Farbauswahldialog, welcher über das ActionListener
+ * um in Abhaengigkeit von der Mausinteraktion mit der Komponente
+ * visuelles Feedback zu geben. Ausserdem beinhaltet RoundButton
+ * bereits einen Farbauswahldialog, welcher ueber das ActionListener
  * Interface angezeigt werden kann. Dies kann jedoch ausgestellt werden.
  * @author Chris
  * @category Grafikkomponente
@@ -44,19 +44,19 @@ public class RoundButton extends JButton implements MouseListener, ActionListene
 	 */
 	final public int width;
 	/**
-	 * Schnellzugriff auf die Höhe des Buttons
+	 * Schnellzugriff auf die Hoehe des Buttons
 	 */
 	final public int height;
 	
 	/**
 	 * Konstruktor zur Initialisierung der JButton Unterklasse RoundButton.
 	 * Setzt die Hauptfarbe auf die spezifierte Farbe und die Grenzfarbe auf Silber.
-	 * Die Höhe und Breite werden einmalig festgelegt und für den eventuellen
+	 * Die Hoehe und Breite werden einmalig festgelegt und fuer den eventuellen
 	 * Auswahldialog wird bereits eine Farbpalette angelegt.
 	 * @param color Hauptfarbe des RoundButtons
 	 * @param w feste Breite
-	 * @param h feste Höhe
-	 * @param palette Farbpalette für Farbauswahldialog
+	 * @param h feste Hoehe
+	 * @param palette Farbpalette fuer Farbauswahldialog
 	 * @param window Window bzw. JFrame in dem sich der Button befindet
 	 * @param dialog true -> Auswahldialog bei Klick / false -> kein Dialog
 	 */
@@ -81,7 +81,7 @@ public class RoundButton extends JButton implements MouseListener, ActionListene
 	}
 	
 	/**
-	 * Muss überschrieben werden, um keinen rechteckigen Rahmen um die Komponente
+	 * Muss ueberschrieben werden, um keinen rechteckigen Rahmen um die Komponente
 	 * gezeichnet zu bekommen.
 	 * @return null
 	 * @see javax.swing.JComponent#getBorder()
@@ -92,9 +92,9 @@ public class RoundButton extends JButton implements MouseListener, ActionListene
 	}
 	
 	/**
-	 * Liefert die zuvor festgelegt Höhe und Breite in
+	 * Liefert die zuvor festgelegt Hoehe und Breite in
 	 * dem Object Dimension zusammengefasst.
-	 * @return Höhe und Breite
+	 * @return Hoehe und Breite
 	 * @see javax.swing.JComponent#getPreferredSize()
 	 */
 	@Override
@@ -103,8 +103,8 @@ public class RoundButton extends JButton implements MouseListener, ActionListene
 	}
 	
 	/**
-	 * Zeichnet eine innere ausgefüllte Ellipse, welche den Hauptbereich
-	 * des RoundButtons darstellt und eine äußere nicht ausgefüllte
+	 * Zeichnet eine innere ausgefuellte Ellipse, welche den Hauptbereich
+	 * des RoundButtons darstellt und eine aeussere nicht ausgefuellte
 	 * Ellipse, welche den runden silbergrauen Grenzbereich darstellt.
 	 * Zum Zeichnen wird eine Instanz der Klasse Graphics2D verwendet und
 	 * Antialising eingestellt. Die Farben ergeben sich dynamisch aus der
@@ -129,7 +129,7 @@ public class RoundButton extends JButton implements MouseListener, ActionListene
 	/**
 	 * Falls der ActionListener eingestellt wurde zeigt der JButton auf Klick einen
 	 * Farbauswahldialog an, in dem sich die Farben der Farbpalette einstellen lassen.
-	 * Somit kann die Farbe des RoundButtons direkt per Klick verändert werden.
+	 * Somit kann die Farbe des RoundButtons direkt per Klick veraendert werden.
 	 * @param e Ereignisobjekt
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
@@ -174,8 +174,8 @@ public class RoundButton extends JButton implements MouseListener, ActionListene
 	}
 
 	/**
-	 * Beim drüberfahren mit dem Mauszeiger muss der Alphawert der Komponente verringert werden.
-	 * Der Konstruktor ignoriert standardmäßig den mitgelieferten Alphawert, sodass dieser
+	 * Beim drueberfahren mit dem Mauszeiger muss der Alphawert der Komponente verringert werden.
+	 * Der Konstruktor ignoriert standardmaessig den mitgelieferten Alphawert, sodass dieser
 	 * immer den Wert 255 besitzt.
 	 * @param e Ereignisobjekt
 	 * @see java.awt.event.MouseListener#mouseEntered(java.awt.event.MouseEvent)
@@ -198,7 +198,7 @@ public class RoundButton extends JButton implements MouseListener, ActionListene
 	}
 
 	/**
-	 * Verdunkelt die Farbe wenn möglich beim gedrückthalten des Mauszeigers.
+	 * Verdunkelt die Farbe wenn moeglich beim gedrueckthalten des Mauszeigers.
 	 * Sollte Verdunkeln nicht funktionieren wird aufgehellt.<br/>
 	 * Zusammen mit mouseReleased() wird somit bei Mausklick eine Farbanimation erzeugt.
 	 * @param e Ereignisobjekt
@@ -249,8 +249,8 @@ public class RoundButton extends JButton implements MouseListener, ActionListene
 	}
 	
 	/**
-	 * Verschleiert die tatsächlich eingestellte Farbe durch die "Verstecktfarbe", welche
-	 * in der Basisklasse Command definiert ist. Wird für die ServerGui benötigt.
+	 * Verschleiert die tatsaechlich eingestellte Farbe durch die "Verstecktfarbe", welche
+	 * in der Basisklasse Command definiert ist. Wird fuer die ServerGui benoetigt.
 	 * @param hidden true -> Zeichenfarbe auf "Verstecktfarbe" / false -> Zeichenfarbe auf eingestellte Farbe
 	 */
 	public void hide(boolean hidden){

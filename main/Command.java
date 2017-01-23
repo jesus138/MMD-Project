@@ -4,18 +4,18 @@ import java.awt.Color;
 import java.awt.Font;
 
 /**
- * Konfigurationsklasse in der Konstanten für folgende
+ * Konfigurationsklasse in der Konstanten fuer folgende
  * Aspekte definiert sind:<br/>
  * <ul>
- * <li>Größenangaben zu Grafikfenstern, Verlaufsbereiche und Buttons</li>
+ * <li>Groessenangaben zu Grafikfenstern, Verlaufsbereiche und Buttons</li>
  * <li>Standardeinstellungswerte wie im Netzwerkprotokoll definiert</li>
- * <li>Kommandostrings für Client-Server Kommunikation</li>
+ * <li>Kommandostrings fuer Client-Server Kommunikation</li>
  * <li>Ergebnisstrings</li>
  * <li>Farbpalette als Zeichen und Farben</li>
  * <li>Standardschriftart</li>
  * </ul>
- * Außerdem sind noch einige Funktionen zum Umwandeln von Farben, Strings und Zeichen
- * in das gewünschte Zielformat vorhanden. Diese Funktionen werden in den Hauptklassen
+ * Ausserdem sind noch einige Funktionen zum Umwandeln von Farben, Strings und Zeichen
+ * in das gewuenschte Zielformat vorhanden. Diese Funktionen werden in den Hauptklassen
  * verwendet um textuelle Farbcodes in visuelle umzuwandeln und umgekehrt.
  * @author Chris
  * @category Logikkomponente
@@ -44,9 +44,9 @@ public class Command
 	 * Versteckte oder unbenutzte Elemente werden Pink dargestellt
 	 */
 	public static final Color HIDDEN_COLOR = new Color(244, 0, 138, 255);
-	public static final Font CAPTION_FONT = new Font("SansSerif", Font.BOLD, 30);
+	public static final Font CAPTION_FONT = new Font("Sansserif", Font.BOLD, 30);
 	/**
-	 * Farbpalette mit tatsächlichen Farben im RGB-Farbmodell
+	 * Farbpalette mit tatsaechlichen Farben im RGB-Farbmodell
 	 */
 	public static final Color[] COLORS = {
 			new Color(255,0,0),					// Red FF0000
@@ -92,7 +92,7 @@ public class Command
 	
 	/**
 	 * Liefert zu einem beliebigen Zeichen der Zeichenfarbpalette eine
-	 * dazugehörige Farbe im RGB-Farbmodell.
+	 * dazugehoerige Farbe im RGB-Farbmodell.
 	 * @param c Zeichen aus COLORSET
 	 * @return Farbe aus COLORS
 	 */
@@ -169,10 +169,10 @@ public class Command
 	}
 	
 	/**
-	 * Liefert eine für jedes Zeichen eines Ergebnisses
+	 * Liefert eine fuer jedes Zeichen eines Ergebnisses
 	 * die dazu spezifizierte Farbe.
 	 * @param c Ergebniszeichen vom Server
-	 * @return Farbe für Ergebniszeichen
+	 * @return Farbe fuer Ergebniszeichen
 	 */
 	public static Color getResColor(char c)
 	{
@@ -184,7 +184,7 @@ public class Command
 	
 	/**
 	 * Wandelt einen Rateversuch in eine Folge von Farben
-	 * um. Wird hauptsächlich von HistoryPanel verwendet.
+	 * um. Wird hauptsaechlich von HistoryPanel verwendet.
 	 * @param code Zeichenkette als Teilmenge von COLORSET
 	 * @return Farben als Array
 	 */
@@ -196,11 +196,11 @@ public class Command
 	}
 	
 	/**
-	 * Liefert für eine Folge von Farben, die eine Teilmenge von
+	 * Liefert fuer eine Folge von Farben, die eine Teilmenge von
 	 * COLORS sein muss, eine Zeichenkette, die Teilmenge von COLORSET
 	 * ist. Wird im Zusammenhang mit dem CodePanel verwendet.
 	 * @param colors Farbinformationen
-	 * @return Repräsentation der Farbinformation als Zeichenkette
+	 * @return Repraesentation der Farbinformation als Zeichenkette
 	 */
 	public static String getStringCode(Color[] colors)
 	{

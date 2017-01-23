@@ -35,13 +35,13 @@ import main.Client;
 import main.Command;
 
 /**
- * Die ClientGui ist ein JFrame welche die Oberfläche für das Client-Programm liefert.
- * Sie ist eng verzahnt mit der Client Klasse und über eine symmetrische Assoziation mit dieser verknüpft.
- * Es wird auch ein ActionListener implementiert, sodass Ereignisse behandelt und an den Client weitergegeben werden können.<br/>
+ * Die ClientGui ist ein JFrame welche die Oberflaeche fuer das Client-Programm liefert.
+ * Sie ist eng verzahnt mit der Client Klasse und ueber eine symmetrische Assoziation mit dieser verknuepft.
+ * Es wird auch ein ActionListener implementiert, sodass Ereignisse behandelt und an den Client weitergegeben werden koennen.<br/>
  * Untergliedern tut sich die GUI in einen linken Spielbereich der ein CodePanel zum Raten und ein HistoryPanel
- * für den Verlauf beinhaltet und einen rechten Einstellungsbereich. Der Einstellungsbereich beinhaltet eine Nachrichtenbox,
- * JTextFields für den Spielernamen, die Hostadresse und den Port des zu verbindenden Servers. Zudem werden JButtons für die
- * einzelnen Spieloptionen bereitgestellt. Weitere Funktionen sind über die JMenuBar zu erreichen.<br/>
+ * fuer den Verlauf beinhaltet und einen rechten Einstellungsbereich. Der Einstellungsbereich beinhaltet eine Nachrichtenbox,
+ * JTextFields fuer den Spielernamen, die Hostadresse und den Port des zu verbindenden Servers. Zudem werden JButtons fuer die
+ * einzelnen Spieloptionen bereitgestellt. Weitere Funktionen sind ueber die JMenuBar zu erreichen.<br/>
  * <b>Wichtig:</b> Beenden der ClientGui beendet nicht nur den UI-Thread sondern auch den Client-Netzwerkthread.
  * @author Chris
  * @category UI-Thread
@@ -73,7 +73,7 @@ public class ClientGui extends JFrame implements ActionListener
 	private Client client;
 	
 	/**
-	 * Konstruktor der die Oberfläche initialisiert und dabei die Methoden
+	 * Konstruktor der die Oberflaeche initialisiert und dabei die Methoden
 	 * initWest(), initEast() und initMenu() verwendet um die drei Hauptkomponenten
 	 * des Layouts einzugliedern.
 	 * @param client Client Instanz zur Interaktion mit Hauptschnittstelle
@@ -112,7 +112,7 @@ public class ClientGui extends JFrame implements ActionListener
 		eastPanel = new JPanel(new BorderLayout());
 		eastPanel.setOpaque(false);
 		
-		// Überschriften Panel
+		// ueberschriften Panel
 		labelPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 20));
 		labelPanel.setOpaque(false);
 		settingsLabel = new JLabel("Einstellungen");
@@ -189,7 +189,7 @@ public class ClientGui extends JFrame implements ActionListener
 		scroller = new JScrollPane(messageBox, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		messagePanel.add(scroller);
 		
-		// alle drei Panels hinzufügen
+		// alle drei Panels hinzufuegen
 		eastPanel.add(labelPanel, BorderLayout.NORTH);
 		eastPanel.add(settingsPanel, BorderLayout.CENTER);
 		eastPanel.add(messagePanel, BorderLayout.SOUTH);
@@ -197,8 +197,8 @@ public class ClientGui extends JFrame implements ActionListener
 	}
 	
 	/**
-	 * Setzt die GUI in den Verbindungsmodus. Hierbei ist nur der "Verbinden-Button" aktiv, während alle anderen Kommandoelemente deaktiviert sind.
-	 * Erst nach dem eine Verbindung hergestellt wurde wird der Verbindungsmodus geändert.
+	 * Setzt die GUI in den Verbindungsmodus. Hierbei ist nur der "Verbinden-Button" aktiv, waehrend alle anderen Kommandoelemente deaktiviert sind.
+	 * Erst nach dem eine Verbindung hergestellt wurde wird der Verbindungsmodus geaendert.
 	 * @category Zustand
 	 */
 	public void setToConnectMode()
@@ -224,7 +224,7 @@ public class ClientGui extends JFrame implements ActionListener
 	}
 	
 	/**
-	 * Während des Spiels befindet sich die GUI im Ratemodus. Hierbei kann nur der "Rate-" und "Beenden-Button" aktiv sein.
+	 * Waehrend des Spiels befindet sich die GUI im Ratemodus. Hierbei kann nur der "Rate-" und "Beenden-Button" aktiv sein.
 	 * Zustand wird verlassen, sobald das Spiel endet oder die Verbindung zum Server verloren geht.
 	 * @category Zustand
 	 */
@@ -239,7 +239,7 @@ public class ClientGui extends JFrame implements ActionListener
 	
 	/**
 	 * Sollte der Automatikmodus aktiv sein und die KI raten, dann kann der Client lediglich das Spiel vorzeitig abbrechen.
-	 * Weitere Interaktionen sind hierbei nicht möglich.
+	 * Weitere Interaktionen sind hierbei nicht moeglich.
 	 * @category Zustand
 	 */
 	public void setToAutoMode()
@@ -257,9 +257,9 @@ public class ClientGui extends JFrame implements ActionListener
 		menu = new JMenu("Optionen");
 		quitItem = new JMenuItem("Beenden");
 		quitItem.addActionListener(this);
-		infoclearItem = new JMenuItem("Nachrichten löschen");
+		infoclearItem = new JMenuItem("Nachrichten loeschen");
 		infoclearItem.addActionListener(this);
-		historyClearItem = new JMenuItem("Verlauf löschen");
+		historyClearItem = new JMenuItem("Verlauf loeschen");
 		historyClearItem.addActionListener(this);
 		menu.add(quitItem);
 		menu.add(infoclearItem);
@@ -269,8 +269,8 @@ public class ClientGui extends JFrame implements ActionListener
 	}
 	
 	/**
-	 * Fügt eine Nachricht ganz oben in der JTextArea ein.
-	 * Dient zum Überwachen der Client-Server-Kommunikation und wichtiger Ereignisse.
+	 * Fuegt eine Nachricht ganz oben in der JTextArea ein.
+	 * Dient zum ueberwachen der Client-Server-Kommunikation und wichtiger Ereignisse.
 	 * @param msg Nachricht
 	 */
 	public void appendMessage(String msg){
@@ -279,7 +279,7 @@ public class ClientGui extends JFrame implements ActionListener
 	}
 	
 	/**
-	 * Löscht alle Nachrichten in der JTextArea.
+	 * Loescht alle Nachrichten in der JTextArea.
 	 */
 	public void clearMessages(){
 		messageBox.setText("");
@@ -299,12 +299,12 @@ public class ClientGui extends JFrame implements ActionListener
 	
 	/**
 	 * Initialisert das Ratepanel sowie den Verlaufsbereich. Die Breite der
-	 * Bereiche bestimmt sich aus der Codelänge und die Farbpalette entscheidet
-	 * über die Auswahlmöglichkeiten. Außerdem wird der eventuell bisherige
-	 * Spielverlauf gelöscht.<br/>
+	 * Bereiche bestimmt sich aus der Codelaenge und die Farbpalette entscheidet
+	 * ueber die Auswahlmoeglichkeiten. Ausserdem wird der eventuell bisherige
+	 * Spielverlauf geloescht.<br/>
 	 * Diese Funktion wird vom Client bei jedem Rundenstart aufgerufen.
-	 * @param colors Farbpalette für Auswahldialog
-	 * @param codelength Codelänge/Anzahl zu ratende Farben
+	 * @param colors Farbpalette fuer Auswahldialog
+	 * @param codelength Codelaenge/Anzahl zu ratende Farben
 	 */
 	public void setupGui(Color[] colors, int codelength){
 		guessPanel.changePanel(colors, codelength);
@@ -312,7 +312,7 @@ public class ClientGui extends JFrame implements ActionListener
 	}
 	
 	/**
-	 * Fügt einen bisherigen Rateversuch dem Verlaufsbereich hinzu.<br/>
+	 * Fuegt einen bisherigen Rateversuch dem Verlaufsbereich hinzu.<br/>
 	 * Aufgerufen wird dies nach jedem RESULT-Kommando vom Client.
 	 * @param colors geratene Farben des Clients
 	 * @param rescode Resultatcode des Servers
@@ -322,20 +322,20 @@ public class ClientGui extends JFrame implements ActionListener
 	}
 	
 	/**
-	 * Erlaubt dem Spieler über das Menü den Verlaufsbereich vorzeitig zu leeren.
+	 * Erlaubt dem Spieler ueber das Menue den Verlaufsbereich vorzeitig zu leeren.
 	 */
 	public void clearHistory(){
 		historyPanel.clearHistory(guessPanel.getCode().length());
 	}
 	
 	/**
-	 * Präsentiert einen Dialog, welcher den Spieler fragt ob dieser eine weitere Runde
-	 * spielen möchte. Sollte der Spieler dies nicht wollen, wird die Verbindung zum
+	 * Praesentiert einen Dialog, welcher den Spieler fragt ob dieser eine weitere Runde
+	 * spielen moechte. Sollte der Spieler dies nicht wollen, wird die Verbindung zum
 	 * Server getrennt, sodass der Server wieder auf einen weiteren Client warten kann.<br/>
 	 * Wird nach jedem GAMEOVER-Kommando im manuellen Modus vom Client aufgerufen.
 	 */
 	public void again(){
-		int resp = JOptionPane.showConfirmDialog(this, "Möchten Sie nochmal spielen?", "Spielende",
+		int resp = JOptionPane.showConfirmDialog(this, "Moechten Sie nochmal spielen?", "Spielende",
 				JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 		if(resp == JOptionPane.YES_OPTION)
 			client.newGame(playerfield.getText());
@@ -384,13 +384,13 @@ public class ClientGui extends JFrame implements ActionListener
 	}
 
 	/** 
-	 * Implementation des Klickereignisverarbeiters für Grafikelemente.<br/>
+	 * Implementation des Klickereignisverarbeiters fuer Grafikelemente.<br/>
 	 * Hier befindet sich die Interaktion der ClientGui mit dem Client, die von der GUI ausgeht.
-	 * Die Buttons "Verbinden", "Neues-Spiel", "Raten", "Beenden", "Automatik" und die Menüelemente
-	 * sorgen für das Aufrufen eventuell benötigter Dialoge wie beim Einstellen des Automatikmodus
-	 * und für das Benachrichtigen des Client-Programms, dass diese Ereignisse stattgefunden haben.
-	 * Das direkte verarbeiten der Ereignisse wird hauptsächlich dem Client überlassen.<br/>
-	 * <b>Achtung:</b> Sollte die Oberfläche komplett beendet werden, so wird dem Client zunächst
+	 * Die Buttons "Verbinden", "Neues-Spiel", "Raten", "Beenden", "Automatik" und die Menueelemente
+	 * sorgen fuer das Aufrufen eventuell benoetigter Dialoge wie beim Einstellen des Automatikmodus
+	 * und fuer das Benachrichtigen des Client-Programms, dass diese Ereignisse stattgefunden haben.
+	 * Das direkte verarbeiten der Ereignisse wird hauptsaechlich dem Client ueberlassen.<br/>
+	 * <b>Achtung:</b> Sollte die Oberflaeche komplett beendet werden, so wird dem Client zunaechst
 	 * mitgeteilt, dass er eventuell bestehende Verbindungen zum Server trennen soll und dann
 	 * wird das gesamte clientseitige Programm beendet.
 	 * @param e Ereignisklasse
